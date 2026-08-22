@@ -97,7 +97,7 @@ export default function EditModal({ target, onClose }: EditModalProps) {
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-neutral-200 bg-white p-6 shadow-xl dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-neutral-200/60 bg-white p-6 shadow-2xl shadow-black/10 dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/50">
         <div className="mb-4 flex items-center justify-between">
           <div className="text-base font-bold text-neutral-900 dark:text-neutral-100">Edit News</div>
           <button

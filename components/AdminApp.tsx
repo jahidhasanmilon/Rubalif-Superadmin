@@ -35,7 +35,7 @@ export default function AdminApp() {
   }
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-neutral-50 dark:bg-neutral-950">
+    <div className="flex h-screen w-full gap-3 overflow-hidden bg-neutral-100 p-3 dark:bg-neutral-950">
       <Sidebar
         user={user}
         activeTab={activeTab}
@@ -47,7 +47,7 @@ export default function AdminApp() {
         pendingCount={Object.keys(pending).length}
         onLogout={logout}
       />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-neutral-200/60 bg-white shadow-xl shadow-black/5 dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/40">
         <Topbar
           activeTab={activeTab}
           isDark={isDark}

@@ -33,7 +33,7 @@ export default function NewsCard({
   const topics = [news.topicA, news.topicB, news.topicC].filter(Boolean);
 
   return (
-    <div className="group flex items-stretch gap-0 overflow-hidden rounded-xl border border-neutral-200 bg-white transition hover:border-neutral-300 hover:shadow-sm dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700">
+    <div className="group flex items-stretch gap-0 overflow-hidden rounded-2xl border border-neutral-200/60 bg-white shadow-sm transition hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
       {type === "pending" && (
         <div className="flex shrink-0 items-start pl-3 pt-3.5">
           <input

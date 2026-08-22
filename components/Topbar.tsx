@@ -33,7 +33,7 @@ export default function Topbar({
   const name = user?.displayName || user?.email || "Admin";
 
   return (
-    <div className="flex h-14 shrink-0 items-center justify-between border-b border-neutral-200 px-4 dark:border-neutral-800 sm:px-6">
+    <div className="flex h-14 shrink-0 items-center justify-between border-b border-neutral-200/60 px-4 dark:border-neutral-800/60 sm:px-6">
       <div className="flex items-center gap-3">
         <button
           className="rounded-md p-1 text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 md:hidden"
