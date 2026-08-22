@@ -1,6 +1,7 @@
 "use client";
 
 import type { NewsItem, NewsType } from "@/lib/types";
+import { IconCheck, IconPencil, IconX, IconTrash } from "./icons";
 
 interface NewsCardProps {
   itemKey: string;
@@ -33,7 +34,7 @@ export default function NewsCard({
   const topics = [news.topicA, news.topicB, news.topicC].filter(Boolean);
 
   return (
-    <div className="group flex items-stretch gap-0 overflow-hidden rounded-2xl border border-neutral-200/60 bg-white shadow-sm transition hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
+    <div className="group flex items-stretch gap-0 overflow-hidden rounded-2xl border border-neutral-200/60 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
       {type === "pending" && (
         <div className="flex shrink-0 items-start pl-3 pt-3.5">
           <input
@@ -119,37 +120,37 @@ export default function NewsCard({
           {type === "pending" ? (
             <>
               <button
-                className="rounded-md bg-green-500 px-2.5 py-1 text-[11px] font-semibold text-black transition hover:opacity-85"
+                className="flex items-center gap-1 rounded-md bg-green-500 px-2.5 py-1 text-[11px] font-semibold text-black transition hover:opacity-85"
                 onClick={() => onApprove(itemKey)}
               >
-                ✓ Approve
+                <IconCheck className="h-3 w-3" /> Approve
               </button>
               <button
-                className="rounded-md bg-blue-500/10 px-2.5 py-1 text-[11px] font-semibold text-blue-600 transition hover:bg-blue-500 hover:text-white dark:text-blue-400"
+                className="flex items-center gap-1 rounded-md bg-blue-500/10 px-2.5 py-1 text-[11px] font-semibold text-blue-600 transition hover:bg-blue-500 hover:text-white dark:text-blue-400"
                 onClick={() => onEdit(itemKey, "pending")}
               >
-                ✏️ Edit
+                <IconPencil className="h-3 w-3" /> Edit
               </button>
               <button
-                className="rounded-md bg-red-500/10 px-2.5 py-1 text-[11px] font-semibold text-red-500 transition hover:bg-red-500 hover:text-white"
+                className="flex items-center gap-1 rounded-md bg-red-500/10 px-2.5 py-1 text-[11px] font-semibold text-red-500 transition hover:bg-red-500 hover:text-white"
                 onClick={() => onReject(itemKey)}
               >
-                ✗ Reject
+                <IconX className="h-3 w-3" /> Reject
               </button>
             </>
           ) : (
             <>
               <button
-                className="rounded-md bg-blue-500/10 px-2.5 py-1 text-[11px] font-semibold text-blue-600 transition hover:bg-blue-500 hover:text-white dark:text-blue-400"
+                className="flex items-center gap-1 rounded-md bg-blue-500/10 px-2.5 py-1 text-[11px] font-semibold text-blue-600 transition hover:bg-blue-500 hover:text-white dark:text-blue-400"
                 onClick={() => onEdit(itemKey, "published")}
               >
-                ✏️ Edit
+                <IconPencil className="h-3 w-3" /> Edit
               </button>
               <button
-                className="rounded-md bg-red-500/10 px-2.5 py-1 text-[11px] font-semibold text-red-500 transition hover:bg-red-500 hover:text-white"
+                className="flex items-center gap-1 rounded-md bg-red-500/10 px-2.5 py-1 text-[11px] font-semibold text-red-500 transition hover:bg-red-500 hover:text-white"
                 onClick={() => onDelete(itemKey)}
               >
-                🗑️ Delete
+                <IconTrash className="h-3 w-3" /> Delete
               </button>
             </>
           )}

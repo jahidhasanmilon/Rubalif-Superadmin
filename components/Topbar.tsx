@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { User } from "firebase/auth";
 import type { Tab } from "./Sidebar";
+import { IconMenu, IconSun, IconMoon, IconLogOut } from "./icons";
 
 const TITLES: Record<Tab, string> = {
   dashboard: "Dashboard",
@@ -39,7 +40,7 @@ export default function Topbar({
           className="rounded-md p-1 text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 md:hidden"
           onClick={onOpenMobileSidebar}
         >
-          ☰
+          <IconMenu className="h-5 w-5" />
         </button>
         <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
           {TITLES[activeTab]}
@@ -51,10 +52,10 @@ export default function Topbar({
           Live
         </div>
         <button
-          className="rounded-lg border border-neutral-200 px-2.5 py-1.5 text-xs text-neutral-500 transition hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-100"
+          className="rounded-lg border border-neutral-200 p-1.5 text-neutral-500 transition hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-100"
           onClick={onToggleTheme}
         >
-          {isDark ? "☀️" : "🌙"}
+          {isDark ? <IconSun className="h-4 w-4" /> : <IconMoon className="h-4 w-4" />}
         </button>
         <div className="relative">
           <button
@@ -71,9 +72,10 @@ export default function Topbar({
                   {user?.email}
                 </div>
                 <button
-                  className="w-full rounded-md px-2 py-1.5 text-left text-xs font-medium text-red-500 hover:bg-red-500/10"
+                  className="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-left text-xs font-medium text-red-500 hover:bg-red-500/10"
                   onClick={onLogout}
                 >
+                  <IconLogOut className="h-3.5 w-3.5" />
                   Sign out
                 </button>
               </div>

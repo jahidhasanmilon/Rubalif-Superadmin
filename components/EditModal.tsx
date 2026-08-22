@@ -216,7 +216,7 @@ export default function EditModal({ target, onClose }: EditModalProps) {
             </div>
             <div className="mt-4 flex gap-2 border-t border-neutral-100 pt-4 dark:border-neutral-800">
               <button
-                className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
+                className="rounded-lg bg-gradient-to-b from-accent-hover to-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-accent/30 transition hover:brightness-110"
                 onClick={save}
               >
                 💾 Save Changes

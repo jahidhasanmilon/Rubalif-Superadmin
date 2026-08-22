@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 import type { NewsRecord } from "@/lib/types";
 import DonutChart from "./DonutChart";
 import BarChart from "./BarChart";
+import { IconClock, IconCheckCircle, IconZap, IconCalendar } from "./icons";
 
 interface DashboardTabProps {
   pending: NewsRecord;
@@ -22,10 +23,10 @@ function timeAgo(ms: number) {
 }
 
 const STAT_CARDS = [
-  { key: "pending", icon: "⏳", label: "Pending Review", sub: "awaiting approval", color: "text-accent bg-accent/10" },
-  { key: "pub", icon: "✅", label: "Published", sub: "live on app", color: "text-green-600 dark:text-green-400 bg-green-500/10" },
-  { key: "auto", icon: "🤖", label: "Auto Generated", sub: "from RSS feeds", color: "text-blue-600 dark:text-blue-400 bg-blue-500/10" },
-  { key: "today", icon: "📅", label: "Added Today", sub: "last 24 hours", color: "text-amber-600 dark:text-amber-400 bg-amber-500/10" },
+  { key: "pending", icon: IconClock, label: "Pending Review", sub: "awaiting approval", color: "text-accent bg-accent/10" },
+  { key: "pub", icon: IconCheckCircle, label: "Published", sub: "live on app", color: "text-green-600 dark:text-green-400 bg-green-500/10" },
+  { key: "auto", icon: IconZap, label: "Auto Generated", sub: "from RSS feeds", color: "text-blue-600 dark:text-blue-400 bg-blue-500/10" },
+  { key: "today", icon: IconCalendar, label: "Added Today", sub: "last 24 hours", color: "text-amber-600 dark:text-amber-400 bg-amber-500/10" },
 ] as const;
 
 export default function DashboardTab({
@@ -88,10 +89,10 @@ export default function DashboardTab({
         {STAT_CARDS.map((c) => (
           <div
             key={c.key}
-            className="rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20"
+            className="rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20"
           >
-            <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-lg text-base ${c.color}`}>
-              {c.icon}
+            <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-lg ${c.color}`}>
+              <c.icon className="h-[18px] w-[18px]" />
             </div>
             <div className="text-3xl font-extrabold text-neutral-900 dark:text-neutral-100">
               {values[c.key]}

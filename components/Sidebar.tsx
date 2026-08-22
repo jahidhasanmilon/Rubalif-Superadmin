@@ -1,6 +1,15 @@
 "use client";
 
 import type { User } from "firebase/auth";
+import {
+  IconChartBar,
+  IconClock,
+  IconCheckCircle,
+  IconPlus,
+  IconSettings,
+  IconLogOut,
+  IconChevronLeft,
+} from "./icons";
 
 export type Tab = "dashboard" | "pending" | "published" | "add" | "settings";
 
@@ -16,17 +25,20 @@ interface SidebarProps {
   onLogout: () => void;
 }
 
-const NAV_GROUPS: { label: string; items: { tab: Tab; icon: string; label: string; badge?: boolean }[] }[] = [
-  { label: "Overview", items: [{ tab: "dashboard", icon: "📊", label: "Dashboard" }] },
+const NAV_GROUPS: {
+  label: string;
+  items: { tab: Tab; icon: (p: { className?: string }) => JSX.Element; label: string; badge?: boolean }[];
+}[] = [
+  { label: "Overview", items: [{ tab: "dashboard", icon: IconChartBar, label: "Dashboard" }] },
   {
     label: "News",
     items: [
-      { tab: "pending", icon: "⏳", label: "Pending", badge: true },
-      { tab: "published", icon: "✅", label: "Published" },
-      { tab: "add", icon: "＋", label: "Add News" },
+      { tab: "pending", icon: IconClock, label: "Pending", badge: true },
+      { tab: "published", icon: IconCheckCircle, label: "Published" },
+      { tab: "add", icon: IconPlus, label: "Add News" },
     ],
   },
-  { label: "Account", items: [{ tab: "settings", icon: "⚙️", label: "Settings" }] },
+  { label: "Account", items: [{ tab: "settings", icon: IconSettings, label: "Settings" }] },
 ];
 
 export default function Sidebar({
@@ -73,10 +85,10 @@ export default function Sidebar({
                 Rubalif
               </span>
               <button
-                className="ml-auto hidden rounded-md border border-neutral-200 px-2 py-1 text-xs text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 md:block"
+                className="ml-auto hidden rounded-md border border-neutral-200 p-1.5 text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 md:block"
                 onClick={onToggleCollapse}
               >
-                ‹
+                <IconChevronLeft className="h-3.5 w-3.5" />
               </button>
             </>
           )}
@@ -93,6 +105,7 @@ export default function Sidebar({
               <div className="space-y-0.5">
                 {group.items.map((item) => {
                   const active = activeTab === item.tab;
+                  const Icon = item.icon;
                   return (
                     <div
                       key={item.tab}
@@ -108,7 +121,7 @@ export default function Sidebar({
                       {active && (
                         <span className="absolute left-0 h-5 w-[3px] rounded-r-full bg-accent" />
                       )}
-                      <span className="w-[18px] shrink-0 text-center text-[14px]">{item.icon}</span>
+                      <Icon className="h-[18px] w-[18px] shrink-0" />
                       {!isCollapsed && (
                         <>
                           <span className="truncate">{item.label}</span>
@@ -153,9 +166,10 @@ export default function Sidebar({
           </div>
           {!isCollapsed && (
             <button
-              className="mt-1.5 w-full rounded-md border border-neutral-200 py-1.5 text-xs font-medium text-neutral-500 transition hover:border-red-300 hover:text-red-500 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-red-800 dark:hover:text-red-400"
+              className="mt-1.5 flex w-full items-center justify-center gap-1.5 rounded-md border border-neutral-200 py-1.5 text-xs font-medium text-neutral-500 transition hover:border-red-300 hover:text-red-500 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-red-800 dark:hover:text-red-400"
               onClick={onLogout}
             >
+              <IconLogOut className="h-3.5 w-3.5" />
               Sign out
             </button>
           )}

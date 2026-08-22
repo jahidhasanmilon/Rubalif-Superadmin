@@ -74,7 +74,7 @@ export default function LoginScreen() {
             />
           </div>
           <button
-            className="mt-1.5 w-full rounded-lg bg-accent py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
+            className="mt-1.5 w-full rounded-lg bg-gradient-to-b from-accent-hover to-accent py-2.5 text-sm font-semibold text-white shadow-sm shadow-accent/30 transition hover:brightness-110"
             onClick={doLogin}
           >
             Sign in →
