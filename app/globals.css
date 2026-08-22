@@ -1,0 +1,54 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-accent: #8b1a2b;
+  --color-accent-hover: #b02235;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-bangla: var(--font-tiro-bangla), serif;
+}
+
+:root {
+  --chart-surface: #ffffff;
+  --chart-text: #111111;
+  --chart-text2: #666666;
+  --chart-border: #d8d8e0;
+}
+.dark {
+  --chart-surface: #181818;
+  --chart-text: #f0f0f0;
+  --chart-text2: #888888;
+  --chart-border: #303030;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  @apply bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100 font-sans;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-neutral-300 dark:bg-neutral-700 rounded-full;
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateX(14px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.animate-toast-in {
+  animation: toast-in 0.25s ease;
+}
