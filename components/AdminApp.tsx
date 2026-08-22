@@ -35,7 +35,7 @@ export default function AdminApp() {
   }
 
   return (
-    <div className="flex h-screen w-full gap-3 overflow-hidden bg-neutral-100 p-3 dark:bg-neutral-950">
+    <div className="mesh-bg flex h-screen w-full gap-3 overflow-hidden bg-neutral-100 p-3 dark:bg-neutral-950">
       <Sidebar
         user={user}
         activeTab={activeTab}

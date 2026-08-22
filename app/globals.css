@@ -13,12 +13,26 @@
   --chart-text: #111111;
   --chart-text2: #666666;
   --chart-border: #d8d8e0;
+  --glow-1: rgba(139, 26, 43, 0.12);
+  --glow-2: rgba(99, 102, 241, 0.1);
+  --glow-3: rgba(168, 85, 247, 0.08);
 }
 .dark {
   --chart-surface: #181818;
   --chart-text: #f0f0f0;
   --chart-text2: #888888;
   --chart-border: #303030;
+  --glow-1: rgba(139, 26, 43, 0.45);
+  --glow-2: rgba(99, 102, 241, 0.35);
+  --glow-3: rgba(168, 85, 247, 0.22);
+}
+
+.mesh-bg {
+  background-image:
+    radial-gradient(ellipse 900px 700px at 8% -10%, var(--glow-1), transparent 60%),
+    radial-gradient(ellipse 800px 800px at 100% 105%, var(--glow-2), transparent 60%),
+    radial-gradient(ellipse 600px 600px at 85% 0%, var(--glow-3), transparent 55%);
+  background-repeat: no-repeat;
 }
 
 html,
