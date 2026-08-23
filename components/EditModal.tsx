@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import type { NewsItem, NewsType } from "@/lib/types";
-import { TOPICS } from "@/lib/constants";
 import { fetchNews, saveEdit } from "@/lib/newsActions";
 import ImageUploadField from "./ImageUploadField";
 import { useToast } from "./ToastProvider";
@@ -10,6 +9,7 @@ import { useToast } from "./ToastProvider";
 interface EditModalProps {
   target: { key: string; type: NewsType } | null;
   onClose: () => void;
+  topics: string[];
 }
 
 function wordCountInfo(text: string, max: number) {
@@ -28,7 +28,7 @@ const inputCls =
 const labelCls =
   "mb-1.5 block text-[10px] font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-600";
 
-export default function EditModal({ target, onClose }: EditModalProps) {
+export default function EditModal({ target, onClose, topics }: EditModalProps) {
   const toast = useToast();
   const [form, setForm] = useState<Partial<NewsItem>>({});
   const [thumbUrl, setThumbUrl] = useState("");
@@ -190,7 +190,7 @@ export default function EditModal({ target, onClose }: EditModalProps) {
                 <label className={labelCls}>Topic A</label>
                 <select value={form.topicA || ""} onChange={set("topicA")} className={`${inputCls} w-full`}>
                   <option value="">Select</option>
-                  {TOPICS.map((t) => (
+                  {topics.map((t) => (
                     <option key={t}>{t}</option>
                   ))}
                 </select>
@@ -199,7 +199,7 @@ export default function EditModal({ target, onClose }: EditModalProps) {
                 <label className={labelCls}>Topic B</label>
                 <select value={form.topicB || ""} onChange={set("topicB")} className={`${inputCls} w-full`}>
                   <option value="">Select</option>
-                  {TOPICS.map((t) => (
+                  {topics.map((t) => (
                     <option key={t}>{t}</option>
                   ))}
                 </select>
@@ -208,7 +208,7 @@ export default function EditModal({ target, onClose }: EditModalProps) {
                 <label className={labelCls}>Topic C</label>
                 <select value={form.topicC || ""} onChange={set("topicC")} className={`${inputCls} w-full`}>
                   <option value="">Select</option>
-                  {TOPICS.map((t) => (
+                  {topics.map((t) => (
                     <option key={t}>{t}</option>
                   ))}
                 </select>

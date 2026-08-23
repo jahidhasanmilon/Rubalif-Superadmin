@@ -2,18 +2,18 @@
 
 import { useMemo, useState } from "react";
 import type { NewsRecord, NewsType } from "@/lib/types";
-import { TOPICS } from "@/lib/constants";
 import NewsCard from "./NewsCard";
 import { approveNews, rejectNews } from "@/lib/newsActions";
 import { useToast } from "./ToastProvider";
 
 interface PendingTabProps {
   data: NewsRecord;
+  topics: string[];
   active: boolean;
   onEdit: (key: string, type: NewsType) => void;
 }
 
-export default function PendingTab({ data, active, onEdit }: PendingTabProps) {
+export default function PendingTab({ data, topics, active, onEdit }: PendingTabProps) {
   const toast = useToast();
   const [search, setSearch] = useState("");
   const [topicFilter, setTopicFilter] = useState("");
@@ -104,7 +104,7 @@ export default function PendingTab({ data, active, onEdit }: PendingTabProps) {
           onChange={(e) => setTopicFilter(e.target.value)}
         >
           <option value="">All topics</option>
-          {TOPICS.map((t) => (
+          {topics.map((t) => (
             <option key={t}>{t}</option>
           ))}
         </select>

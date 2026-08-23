@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/hooks/useAuth";
 import { useNewsData } from "@/hooks/useNewsData";
+import { useTopics } from "@/hooks/useTopics";
 import LoginScreen from "./LoginScreen";
 import Sidebar, { type Tab } from "./Sidebar";
 import Topbar from "./Topbar";
@@ -20,6 +21,7 @@ const EditModal = dynamic(() => import("./EditModal"));
 export default function AdminApp() {
   const { user, authReady, logout } = useAuth();
   const { pending, published } = useNewsData();
+  const topics = useTopics();
 
   const [isDark, setIsDark] = useState(() => {
     if (typeof window === "undefined") return true;
@@ -75,15 +77,17 @@ export default function AdminApp() {
           />
           <PendingTab
             data={pending}
+            topics={topics}
             active={activeTab === "pending"}
             onEdit={(key, type) => setEditTarget({ key, type })}
           />
           <PublishedTab
             data={published}
+            topics={topics}
             active={activeTab === "published"}
             onEdit={(key, type) => setEditTarget({ key, type })}
           />
-          <AddNewsTab active={activeTab === "add"} />
+          <AddNewsTab active={activeTab === "add"} topics={topics} />
           <AddMagazineTab active={activeTab === "addMagazine"} />
           <SettingsTab
             active={activeTab === "settings"}
@@ -95,10 +99,11 @@ export default function AdminApp() {
             onLogout={logout}
             pendingCount={Object.keys(pending).length}
             publishedCount={Object.keys(published).length}
+            topics={topics}
           />
         </div>
       </div>
-      <EditModal target={editTarget} onClose={() => setEditTarget(null)} />
+      <EditModal target={editTarget} onClose={() => setEditTarget(null)} topics={topics} />
     </div>
   );
 }

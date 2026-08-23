@@ -2,24 +2,28 @@
 
 import { useMemo, useState } from "react";
 import type { NewsRecord, NewsType } from "@/lib/types";
-import { TOPICS } from "@/lib/constants";
 import NewsCard from "./NewsCard";
 import { deletePublished } from "@/lib/newsActions";
 import { useToast } from "./ToastProvider";
 
 interface PublishedTabProps {
   data: NewsRecord;
+  topics: string[];
   active: boolean;
   onEdit: (key: string, type: NewsType) => void;
 }
 
-export default function PublishedTab({ data, active, onEdit }: PublishedTabProps) {
+export default function PublishedTab({ data, topics, active, onEdit }: PublishedTabProps) {
   const toast = useToast();
   const [search, setSearch] = useState("");
   const [topicFilter, setTopicFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
+    const fromTs = dateFrom ? new Date(dateFrom + "T00:00:00").getTime() : null;
+    const toTs = dateTo ? new Date(dateTo + "T23:59:59.999").getTime() : null;
     const result: NewsRecord = {};
     for (const [k, n] of Object.entries(data)) {
       const matchesQ =
@@ -28,10 +32,13 @@ export default function PublishedTab({ data, active, onEdit }: PublishedTabProps
         (n.newsSite || "").toLowerCase().includes(q);
       const matchesTopic =
         !topicFilter || [n.topicA, n.topicB, n.topicC].includes(topicFilter);
-      if (matchesQ && matchesTopic) result[k] = n;
+      const createdAt = n.createdAt || 0;
+      const matchesDate =
+        (!fromTs || createdAt >= fromTs) && (!toTs || createdAt <= toTs);
+      if (matchesQ && matchesTopic && matchesDate) result[k] = n;
     }
     return result;
-  }, [data, search, topicFilter]);
+  }, [data, search, topicFilter, dateFrom, dateTo]);
 
   const displayKeys = useMemo(() => Object.keys(filtered).slice(-60).reverse(), [filtered]);
 
@@ -68,10 +75,34 @@ export default function PublishedTab({ data, active, onEdit }: PublishedTabProps
           onChange={(e) => setTopicFilter(e.target.value)}
         >
           <option value="">All topics</option>
-          {TOPICS.map((t) => (
+          {topics.map((t) => (
             <option key={t}>{t}</option>
           ))}
         </select>
+        <input
+          type="date"
+          value={dateFrom}
+          onChange={(e) => setDateFrom(e.target.value)}
+          className="rounded-lg border border-neutral-200 bg-white px-2.5 py-2 text-xs text-neutral-600 outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
+        />
+        <span className="text-xs text-neutral-400 dark:text-neutral-600">to</span>
+        <input
+          type="date"
+          value={dateTo}
+          onChange={(e) => setDateTo(e.target.value)}
+          className="rounded-lg border border-neutral-200 bg-white px-2.5 py-2 text-xs text-neutral-600 outline-none dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400"
+        />
+        {(dateFrom || dateTo) && (
+          <button
+            onClick={() => {
+              setDateFrom("");
+              setDateTo("");
+            }}
+            className="text-[11px] font-semibold text-accent hover:underline"
+          >
+            Clear dates
+          </button>
+        )}
         <span className="whitespace-nowrap text-[11px] text-neutral-400 dark:text-neutral-600">
           {Object.keys(filtered).length} results
         </span>

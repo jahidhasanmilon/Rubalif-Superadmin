@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { TOPICS } from "@/lib/constants";
 import { submitNews } from "@/lib/newsActions";
 import ImageUploadField from "./ImageUploadField";
 import { useToast } from "./ToastProvider";
 
 interface AddNewsTabProps {
   active: boolean;
+  topics: string[];
 }
 
 function wordCountInfo(text: string, max: number) {
@@ -39,7 +39,7 @@ const inputCls =
 const labelCls =
   "mb-1.5 block text-[10px] font-semibold uppercase tracking-wide text-neutral-400 dark:text-neutral-600";
 
-export default function AddNewsTab({ active }: AddNewsTabProps) {
+export default function AddNewsTab({ active, topics }: AddNewsTabProps) {
   const toast = useToast();
   const [form, setForm] = useState(emptyForm);
   const [thumbUrl, setThumbUrl] = useState("");
@@ -178,7 +178,7 @@ export default function AddNewsTab({ active }: AddNewsTabProps) {
           <label className={labelCls}>Topic A</label>
           <select value={form.tA} onChange={set("tA")} className={`${inputCls} w-full`}>
             <option value="">Select</option>
-            {TOPICS.map((t) => (
+            {topics.map((t) => (
               <option key={t}>{t}</option>
             ))}
           </select>
@@ -187,7 +187,7 @@ export default function AddNewsTab({ active }: AddNewsTabProps) {
           <label className={labelCls}>Topic B</label>
           <select value={form.tB} onChange={set("tB")} className={`${inputCls} w-full`}>
             <option value="">Select</option>
-            {TOPICS.map((t) => (
+            {topics.map((t) => (
               <option key={t}>{t}</option>
             ))}
           </select>
@@ -196,7 +196,7 @@ export default function AddNewsTab({ active }: AddNewsTabProps) {
           <label className={labelCls}>Topic C</label>
           <select value={form.tC} onChange={set("tC")} className={`${inputCls} w-full`}>
             <option value="">Select</option>
-            {TOPICS.map((t) => (
+            {topics.map((t) => (
               <option key={t}>{t}</option>
             ))}
           </select>
