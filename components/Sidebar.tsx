@@ -30,6 +30,7 @@ const NAV_GROUPS: {
   label: string;
   items: { tab: Tab; icon: (p: { className?: string }) => JSX.Element; label: string; badge?: boolean }[];
 }[] = [
+  { label: "Overview", items: [{ tab: "dashboard", icon: IconChartBar, label: "Dashboard" }] },
   {
     label: "News",
     items: [
@@ -38,7 +39,6 @@ const NAV_GROUPS: {
       { tab: "published", icon: IconCheckCircle, label: "Published" },
     ],
   },
-  { label: "Overview", items: [{ tab: "dashboard", icon: IconChartBar, label: "Dashboard" }] },
   { label: "Account", items: [{ tab: "settings", icon: IconSettings, label: "Settings" }] },
 ];
 
