@@ -59,7 +59,7 @@ export default function AdminApp() {
         pendingCount={Object.keys(pending).length}
         onLogout={logout}
       />
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden border-neutral-200/60 bg-white dark:border-neutral-800/60 dark:bg-neutral-900 md:rounded-2xl md:border md:shadow-xl md:shadow-black/5 dark:md:shadow-black/40">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden border-neutral-200/60 bg-white dark:border-neutral-800/60 dark:bg-neutral-900 md:rounded-xl md:border md:shadow-xl md:shadow-black/5 dark:md:shadow-black/40">
         <Topbar
           activeTab={activeTab}
           isDark={isDark}

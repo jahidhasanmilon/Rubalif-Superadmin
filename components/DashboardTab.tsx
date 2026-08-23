@@ -89,7 +89,7 @@ export default function DashboardTab({
         {STAT_CARDS.map((c) => (
           <div
             key={c.key}
-            className="rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20"
+            className="rounded-xl border border-neutral-200/60 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20"
           >
             <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-lg ${c.color}`}>
               <c.icon className="h-[18px] w-[18px]" />
@@ -106,7 +106,7 @@ export default function DashboardTab({
       </div>
 
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        <div className="rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
+        <div className="rounded-xl border border-neutral-200/60 bg-white p-4 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
           <div className="mb-3 flex items-center justify-between">
             <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
               📰 News by Source
@@ -117,7 +117,7 @@ export default function DashboardTab({
           </div>
           <DonutChart sites={stats.sortedSites} isDark={isDark} />
         </div>
-        <div className="rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
+        <div className="rounded-xl border border-neutral-200/60 bg-white p-4 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
           <div className="mb-3 flex items-center justify-between">
             <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
               📊 Overview
@@ -137,7 +137,7 @@ export default function DashboardTab({
       </div>
 
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        <div className="rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
+        <div className="rounded-xl border border-neutral-200/60 bg-white p-4 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
           <div className="mb-3 flex items-center justify-between">
             <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
               🏆 Top News Sources
@@ -169,7 +169,7 @@ export default function DashboardTab({
             </div>
           )}
         </div>
-        <div className="rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
+        <div className="rounded-xl border border-neutral-200/60 bg-white p-4 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
           <div className="mb-3 flex items-center justify-between">
             <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
               ⏰ Latest Pending
@@ -223,7 +223,7 @@ export default function DashboardTab({
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-neutral-200/60 bg-white p-3.5 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
+      <div className="flex flex-wrap items-center gap-4 rounded-xl border border-neutral-200/60 bg-white p-3.5 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
         <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
         <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">
           Database Connected

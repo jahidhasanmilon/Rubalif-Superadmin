@@ -44,8 +44,12 @@ export default function Topbar({
         >
           <IconMenu className="h-5 w-5" />
         </button>
-        <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-          {TITLES[activeTab]}
+        <div className="flex items-center gap-1.5 text-sm">
+          <span className="font-medium text-neutral-400 dark:text-neutral-600">Rubalif</span>
+          <span className="text-neutral-300 dark:text-neutral-700">/</span>
+          <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+            {TITLES[activeTab]}
+          </span>
         </div>
       </div>
       <div className="flex items-center gap-2">

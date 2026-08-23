@@ -82,7 +82,7 @@ export default function Sidebar({
         />
       )}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-dvh w-60 flex-col border-r border-neutral-200 bg-white transition-[width,transform] duration-200 dark:border-neutral-800 dark:bg-neutral-900 md:static md:h-full md:translate-x-0 md:rounded-2xl md:border md:shadow-xl md:shadow-black/5 dark:md:shadow-black/40 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-dvh w-60 flex-col border-r border-neutral-200 bg-white transition-[width,transform] duration-200 dark:border-neutral-800 dark:bg-neutral-900 md:static md:h-full md:translate-x-0 md:rounded-xl md:border md:shadow-xl md:shadow-black/5 dark:md:shadow-black/40 ${
           isCollapsed ? "md:w-16" : "md:w-60"
         } ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
@@ -131,13 +131,10 @@ export default function Sidebar({
                         isCollapsed ? "justify-center" : ""
                       } ${
                         active
-                          ? "bg-accent/10 text-accent dark:text-red-400"
+                          ? "bg-neutral-100 text-neutral-900 dark:bg-white/10 dark:text-white"
                           : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
                       }`}
                     >
-                      {active && (
-                        <span className="absolute left-0 h-5 w-[3px] rounded-r-full bg-accent" />
-                      )}
                       <Icon className="h-[18px] w-[18px] shrink-0" />
                       {!isCollapsed && (
                         <>

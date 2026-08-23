@@ -54,7 +54,7 @@ export default function AutomationTab({ active, user }: AutomationTabProps) {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl border border-neutral-200/60 bg-gradient-to-br from-accent/5 via-transparent to-blue-500/5 p-5 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
+      <div className="rounded-xl border border-neutral-200/60 bg-gradient-to-br from-accent/5 via-transparent to-blue-500/5 p-5 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
         <div className="mb-1 flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/10 text-accent">
             <IconZap className="h-[18px] w-[18px]" />
@@ -98,7 +98,7 @@ export default function AutomationTab({ active, user }: AutomationTabProps) {
       </div>
 
       {result && (
-        <div className="rounded-2xl border border-neutral-200/60 bg-white p-5 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
+        <div className="rounded-xl border border-neutral-200/60 bg-white p-5 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
           <div className="mb-3 grid grid-cols-3 gap-3">
             <div className="rounded-lg bg-green-500/10 p-3 text-center">
               <div className="text-xl font-extrabold text-green-600 dark:text-green-400">

@@ -21,7 +21,7 @@ export default function LoginScreen() {
 
   return (
     <div className="mesh-bg flex h-dvh w-full items-center justify-center bg-neutral-50 p-4 dark:bg-neutral-950">
-      <div className="flex w-full max-w-3xl overflow-hidden rounded-2xl shadow-xl">
+      <div className="flex w-full max-w-3xl overflow-hidden rounded-xl shadow-xl">
         <div className="hidden w-80 shrink-0 flex-col justify-between bg-gradient-to-br from-accent to-red-700 p-10 sm:flex">
           <div className="flex items-center gap-3">
             <Image
