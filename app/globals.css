@@ -22,9 +22,9 @@
   --chart-text: #f0f0f0;
   --chart-text2: #888888;
   --chart-border: #303030;
-  --glow-1: rgba(139, 26, 43, 0.55);
-  --glow-2: rgba(99, 102, 241, 0.42);
-  --glow-3: rgba(168, 85, 247, 0.3);
+  --glow-1: rgba(139, 26, 43, 0.45);
+  --glow-2: rgba(99, 102, 241, 0.35);
+  --glow-3: rgba(168, 85, 247, 0.22);
 }
 
 .mesh-bg {
