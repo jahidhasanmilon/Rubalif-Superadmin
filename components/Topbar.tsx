@@ -10,6 +10,7 @@ const TITLES: Record<Tab, string> = {
   pending: "Pending",
   published: "Published",
   add: "Add News",
+  addMagazine: "Add Magazine",
   settings: "Settings",
 };
 

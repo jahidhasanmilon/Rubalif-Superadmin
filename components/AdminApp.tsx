@@ -13,6 +13,7 @@ import type { NewsType } from "@/lib/types";
 const PendingTab = dynamic(() => import("./PendingTab"));
 const PublishedTab = dynamic(() => import("./PublishedTab"));
 const AddNewsTab = dynamic(() => import("./AddNewsTab"));
+const AddMagazineTab = dynamic(() => import("./AddMagazineTab"));
 const SettingsTab = dynamic(() => import("./SettingsTab"));
 const EditModal = dynamic(() => import("./EditModal"));
 
@@ -83,6 +84,7 @@ export default function AdminApp() {
             onEdit={(key, type) => setEditTarget({ key, type })}
           />
           <AddNewsTab active={activeTab === "add"} />
+          <AddMagazineTab active={activeTab === "addMagazine"} />
           <SettingsTab
             active={activeTab === "settings"}
             isDark={isDark}

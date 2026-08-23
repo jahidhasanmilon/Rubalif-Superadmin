@@ -12,7 +12,7 @@ import {
   IconChevronLeft,
 } from "./icons";
 
-export type Tab = "dashboard" | "pending" | "published" | "add" | "settings";
+export type Tab = "dashboard" | "pending" | "published" | "add" | "addMagazine" | "settings";
 
 interface SidebarProps {
   user: User | null;
@@ -35,6 +35,7 @@ const NAV_GROUPS: {
     label: "News",
     items: [
       { tab: "add", icon: IconPlus, label: "Add News" },
+      { tab: "addMagazine", icon: IconPlus, label: "Add Magazine" },
       { tab: "pending", icon: IconClock, label: "Pending", badge: true },
       { tab: "published", icon: IconCheckCircle, label: "Published" },
     ],
