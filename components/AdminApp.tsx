@@ -1,18 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { useAuth } from "@/hooks/useAuth";
 import { useNewsData } from "@/hooks/useNewsData";
 import LoginScreen from "./LoginScreen";
 import Sidebar, { type Tab } from "./Sidebar";
 import Topbar from "./Topbar";
 import DashboardTab from "./DashboardTab";
-import PendingTab from "./PendingTab";
-import PublishedTab from "./PublishedTab";
-import AddNewsTab from "./AddNewsTab";
-import SettingsTab from "./SettingsTab";
-import EditModal from "./EditModal";
 import type { NewsType } from "@/lib/types";
+
+const PendingTab = dynamic(() => import("./PendingTab"));
+const PublishedTab = dynamic(() => import("./PublishedTab"));
+const AddNewsTab = dynamic(() => import("./AddNewsTab"));
+const SettingsTab = dynamic(() => import("./SettingsTab"));
+const EditModal = dynamic(() => import("./EditModal"));
 
 export default function AdminApp() {
   const { user, authReady, logout } = useAuth();

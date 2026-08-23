@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { User } from "firebase/auth";
 import {
   IconChartBar,
@@ -73,9 +74,12 @@ export default function Sidebar({
         } ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="flex h-14 shrink-0 items-center gap-2 border-b border-neutral-200 px-4 dark:border-neutral-800">
-          <img
+          <Image
             src="/logo.png"
             alt="Rubalif"
+            width={64}
+            height={64}
+            priority
             className="h-8 w-8 shrink-0 cursor-pointer rounded-lg object-cover"
             onClick={() => isCollapsed && onToggleCollapse()}
           />

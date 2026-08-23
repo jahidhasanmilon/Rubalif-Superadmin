@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function LoginScreen() {
@@ -23,7 +24,14 @@ export default function LoginScreen() {
       <div className="flex w-full max-w-3xl overflow-hidden rounded-2xl shadow-xl">
         <div className="hidden w-80 shrink-0 flex-col justify-between bg-gradient-to-br from-accent to-red-700 p-10 sm:flex">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Rubalif" className="h-11 w-11 rounded-xl object-cover" />
+            <Image
+              src="/logo.png"
+              alt="Rubalif"
+              width={64}
+              height={64}
+              priority
+              className="h-11 w-11 rounded-xl object-cover"
+            />
             <div className="text-xl font-bold text-white">Rubalif</div>
           </div>
           <div>
