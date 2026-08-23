@@ -30,15 +30,15 @@ const NAV_GROUPS: {
   label: string;
   items: { tab: Tab; icon: (p: { className?: string }) => JSX.Element; label: string; badge?: boolean }[];
 }[] = [
-  { label: "Overview", items: [{ tab: "dashboard", icon: IconChartBar, label: "Dashboard" }] },
   {
     label: "News",
     items: [
+      { tab: "add", icon: IconPlus, label: "Add News" },
       { tab: "pending", icon: IconClock, label: "Pending", badge: true },
       { tab: "published", icon: IconCheckCircle, label: "Published" },
-      { tab: "add", icon: IconPlus, label: "Add News" },
     ],
   },
+  { label: "Overview", items: [{ tab: "dashboard", icon: IconChartBar, label: "Dashboard" }] },
   { label: "Account", items: [{ tab: "settings", icon: IconSettings, label: "Settings" }] },
 ];
 
