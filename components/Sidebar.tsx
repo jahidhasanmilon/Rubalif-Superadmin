@@ -68,7 +68,7 @@ export default function Sidebar({
         />
       )}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-60 flex-col border-r border-neutral-200 bg-white transition-[width,transform] duration-200 dark:border-neutral-800 dark:bg-neutral-900 md:static md:h-full md:translate-x-0 md:rounded-2xl md:border md:shadow-xl md:shadow-black/5 dark:md:shadow-black/40 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-dvh w-60 flex-col border-r border-neutral-200 bg-white transition-[width,transform] duration-200 dark:border-neutral-800 dark:bg-neutral-900 md:static md:h-full md:translate-x-0 md:rounded-2xl md:border md:shadow-xl md:shadow-black/5 dark:md:shadow-black/40 ${
           isCollapsed ? "md:w-16" : "md:w-60"
         } ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
