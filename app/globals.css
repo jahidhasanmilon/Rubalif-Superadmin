@@ -7,10 +7,10 @@
   --font-sans: var(--font-inter), sans-serif;
   --font-bangla: var(--font-tiro-bangla), serif;
 
-  --color-neutral-950: #000000;
-  --color-neutral-900: #0a0a0a;
-  --color-neutral-800: #1a1a1a;
-  --color-neutral-700: #2e2e2e;
+  --color-neutral-950: #0d1117;
+  --color-neutral-900: #0d1117;
+  --color-neutral-800: #21262d;
+  --color-neutral-700: #30363d;
 }
 
 :root {
@@ -20,10 +20,10 @@
   --chart-border: #d8d8e0;
 }
 .dark {
-  --chart-surface: #0a0a0a;
+  --chart-surface: #0d1117;
   --chart-text: #f0f0f0;
-  --chart-text2: #888888;
-  --chart-border: #2e2e2e;
+  --chart-text2: #8b949e;
+  --chart-border: #30363d;
 }
 
 .mesh-bg {
