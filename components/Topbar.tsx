@@ -37,23 +37,25 @@ export default function Topbar({
 
   return (
     <div className="flex h-14 shrink-0 items-center justify-between border-b border-neutral-200/60 px-4 dark:border-neutral-800/60 sm:px-6">
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-3">
         <button
-          className="rounded-md p-1 text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 md:hidden"
+          className="shrink-0 rounded-md p-1 text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 md:hidden"
           onClick={onOpenMobileSidebar}
         >
           <IconMenu className="h-5 w-5" />
         </button>
-        <div className="flex items-center gap-1.5 text-sm">
-          <span className="font-medium text-neutral-400 dark:text-neutral-600">Rubalif</span>
-          <span className="text-neutral-300 dark:text-neutral-700">/</span>
-          <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+        <div className="flex min-w-0 items-center gap-1.5 text-sm">
+          <span className="hidden font-medium text-neutral-400 dark:text-neutral-600 sm:inline">
+            Rubalif
+          </span>
+          <span className="hidden text-neutral-300 dark:text-neutral-700 sm:inline">/</span>
+          <span className="truncate font-semibold text-neutral-900 dark:text-neutral-100">
             {TITLES[activeTab]}
           </span>
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-[11px] font-semibold text-green-600 dark:text-green-400">
+      <div className="flex shrink-0 items-center gap-2">
+        <div className="hidden items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-[11px] font-semibold text-green-600 dark:text-green-400 sm:flex">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
           Live
         </div>
