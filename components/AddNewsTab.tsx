@@ -91,7 +91,7 @@ export default function AddNewsTab({ active, topics }: AddNewsTabProps) {
   const wc2 = wordCountInfo(form.deBn, 60);
 
   return (
-    <div className="rounded-xl border border-neutral-200/60 bg-white p-5 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
+    <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-black/20">
       <div className="mb-4 border-b border-neutral-100 pb-3 text-sm font-semibold text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
         Add New News
       </div>
