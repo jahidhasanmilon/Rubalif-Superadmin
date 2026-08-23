@@ -18,7 +18,10 @@ export default function AdminApp() {
   const { user, authReady, logout } = useAuth();
   const { pending, published } = useNewsData();
 
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return localStorage.getItem("rubalif-theme") !== "light";
+  });
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
@@ -26,6 +29,9 @@ export default function AdminApp() {
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
+    try {
+      localStorage.setItem("rubalif-theme", isDark ? "dark" : "light");
+    } catch {}
   }, [isDark]);
 
   if (!authReady) return null;
