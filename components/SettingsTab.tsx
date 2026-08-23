@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import type { User } from "firebase/auth";
+import { useToast } from "./ToastProvider";
 
 interface SettingsTabProps {
   active: boolean;
@@ -25,7 +27,29 @@ export default function SettingsTab({
   pendingCount,
   publishedCount,
 }: SettingsTabProps) {
+  const toast = useToast();
+  const [running, setRunning] = useState(false);
+
   if (!active) return null;
+
+  const runAutomation = async () => {
+    if (!user) return;
+    setRunning(true);
+    try {
+      const idToken = await user.getIdToken();
+      const res = await fetch("/api/run-automation", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${idToken}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Automation failed");
+      toast(`✅ Added ${data.added}, skipped ${data.alreadyExists}, errors ${data.errors}`);
+    } catch (e) {
+      toast((e as Error).message, "err");
+    } finally {
+      setRunning(false);
+    }
+  };
 
   return (
     <div className="max-w-xl rounded-2xl border border-neutral-200/60 bg-white p-5 shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20">
@@ -90,6 +114,23 @@ export default function SettingsTab({
           <div className="mt-2.5 text-[11px] text-neutral-400 dark:text-neutral-600">
             🌐 Region: Asia Southeast 1
           </div>
+        </div>
+        <div className="flex items-center justify-between rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-3.5 dark:border-neutral-800 dark:bg-neutral-800/60">
+          <div>
+            <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              News Automation
+            </div>
+            <div className="text-[11px] text-neutral-500 dark:text-neutral-400">
+              Fetch RSS feeds and queue new news right now
+            </div>
+          </div>
+          <button
+            className="rounded-lg bg-gradient-to-b from-accent-hover to-accent px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm shadow-accent/30 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+            onClick={runAutomation}
+            disabled={running}
+          >
+            {running ? "⏳ Running..." : "▶ Run automation now"}
+          </button>
         </div>
       </div>
     </div>
