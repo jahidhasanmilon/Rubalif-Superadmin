@@ -15,6 +15,7 @@ const PendingTab = dynamic(() => import("./PendingTab"));
 const PublishedTab = dynamic(() => import("./PublishedTab"));
 const AddNewsTab = dynamic(() => import("./AddNewsTab"));
 const AddMagazineTab = dynamic(() => import("./AddMagazineTab"));
+const AutomationTab = dynamic(() => import("./AutomationTab"));
 const SettingsTab = dynamic(() => import("./SettingsTab"));
 const EditModal = dynamic(() => import("./EditModal"));
 
@@ -89,6 +90,7 @@ export default function AdminApp() {
           />
           <AddNewsTab active={activeTab === "add"} topics={topics} />
           <AddMagazineTab active={activeTab === "addMagazine"} />
+          <AutomationTab active={activeTab === "automation"} user={user} />
           <SettingsTab
             active={activeTab === "settings"}
             isDark={isDark}

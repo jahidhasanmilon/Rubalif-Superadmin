@@ -11,6 +11,7 @@ const TITLES: Record<Tab, string> = {
   published: "Published",
   add: "Add News",
   addMagazine: "Add Magazine",
+  automation: "AI Automation",
   settings: "Settings",
 };
 

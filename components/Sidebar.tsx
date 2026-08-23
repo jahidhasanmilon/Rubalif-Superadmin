@@ -10,9 +10,17 @@ import {
   IconSettings,
   IconLogOut,
   IconChevronLeft,
+  IconZap,
 } from "./icons";
 
-export type Tab = "dashboard" | "pending" | "published" | "add" | "addMagazine" | "settings";
+export type Tab =
+  | "dashboard"
+  | "pending"
+  | "published"
+  | "add"
+  | "addMagazine"
+  | "automation"
+  | "settings";
 
 interface SidebarProps {
   user: User | null;
@@ -39,6 +47,10 @@ const NAV_GROUPS: {
       { tab: "pending", icon: IconClock, label: "Pending", badge: true },
       { tab: "published", icon: IconCheckCircle, label: "Published" },
     ],
+  },
+  {
+    label: "AI Engine",
+    items: [{ tab: "automation", icon: IconZap, label: "AI Automation" }],
   },
   { label: "Account", items: [{ tab: "settings", icon: IconSettings, label: "Settings" }] },
 ];
