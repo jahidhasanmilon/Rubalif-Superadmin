@@ -16,6 +16,9 @@ const tiroBangla = Tiro_Bangla({
 
 export const metadata: Metadata = {
   title: "Rubalif Superadmin",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

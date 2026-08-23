@@ -23,9 +23,7 @@ export default function LoginScreen() {
       <div className="flex w-full max-w-3xl overflow-hidden rounded-2xl shadow-xl">
         <div className="hidden w-80 shrink-0 flex-col justify-between bg-gradient-to-br from-accent to-red-700 p-10 sm:flex">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 text-xl font-bold text-white">
-              R
-            </div>
+            <img src="/logo.png" alt="Rubalif" className="h-11 w-11 rounded-xl object-cover" />
             <div className="text-xl font-bold text-white">Rubalif</div>
           </div>
           <div>

@@ -73,12 +73,12 @@ export default function Sidebar({
         } ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="flex h-14 shrink-0 items-center gap-2 border-b border-neutral-200 px-4 dark:border-neutral-800">
-          <div
-            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-accent text-sm font-bold text-white"
+          <img
+            src="/logo.png"
+            alt="Rubalif"
+            className="h-8 w-8 shrink-0 cursor-pointer rounded-lg object-cover"
             onClick={() => isCollapsed && onToggleCollapse()}
-          >
-            R
-          </div>
+          />
           {!isCollapsed && (
             <>
               <span className="truncate text-sm font-bold text-neutral-900 dark:text-neutral-100">
