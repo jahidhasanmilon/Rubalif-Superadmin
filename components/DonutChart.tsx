@@ -25,12 +25,12 @@ export default function DonutChart({ sites, isDark }: DonutChartProps) {
     const chartText2 = style.getPropertyValue("--chart-text2").trim() || "#666666";
 
     const dpr = window.devicePixelRatio || 1;
-    const W = 140,
-      H = 140,
+    const W = 168,
+      H = 108,
       cx = W / 2,
-      cy = H / 2,
-      R = Math.min(W, H) / 2 - 8,
-      r = R * 0.55;
+      cy = H - 14,
+      R = Math.min(W / 2 - 10, H - 24),
+      r = R * 0.58;
     canvas.width = W * dpr;
     canvas.height = H * dpr;
     canvas.style.width = `${W}px`;
@@ -38,17 +38,17 @@ export default function DonutChart({ sites, isDark }: DonutChartProps) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     const total = sites.reduce((s, [, c]) => s + c, 0) || 1;
-    let angle = -Math.PI / 2;
+    let angle = Math.PI;
 
     if (sites.length === 0) {
       ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.arc(cx, cy, R, Math.PI, Math.PI * 2);
       ctx.strokeStyle = chartBorder;
-      ctx.lineWidth = 16;
+      ctx.lineWidth = 18;
       ctx.stroke();
     } else {
       sites.forEach(([, count], i) => {
-        const slice = (count / total) * Math.PI * 2;
+        const slice = (count / total) * Math.PI;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.arc(cx, cy, R, angle, angle + slice);
@@ -58,24 +58,26 @@ export default function DonutChart({ sites, isDark }: DonutChartProps) {
         angle += slice;
       });
       ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.arc(cx, cy, r, Math.PI, Math.PI * 2);
+      ctx.lineTo(cx - r, cy);
+      ctx.closePath();
       ctx.fillStyle = chartSurface;
       ctx.fill();
     }
 
     ctx.fillStyle = chartText;
-    ctx.font = "bold 18px Inter,sans-serif";
+    ctx.font = "bold 20px Inter,sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(String(total), cx, cy - 6);
+    ctx.fillText(String(total), cx, cy - 16);
     ctx.font = "10px Inter,sans-serif";
     ctx.fillStyle = chartText2;
-    ctx.fillText("pending", cx, cy + 10);
+    ctx.fillText("pending", cx, cy - 2);
   }, [sites, isDark]);
 
   return (
     <div className="flex items-center gap-5">
-      <canvas ref={canvasRef} width={140} height={140} className="shrink-0" />
+      <canvas ref={canvasRef} width={168} height={108} className="shrink-0" />
       <div className="flex flex-1 flex-col gap-1.5 text-[11px]">
         {sites.slice(0, 5).map(([name, count], i) => (
           <div key={name} className="flex items-center gap-1.5">

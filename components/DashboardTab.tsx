@@ -23,10 +23,38 @@ function timeAgo(ms: number) {
 }
 
 const STAT_CARDS = [
-  { key: "pending", icon: IconClock, label: "Pending Review", sub: "awaiting approval", color: "text-accent bg-accent/10" },
-  { key: "pub", icon: IconCheckCircle, label: "Published", sub: "live on app", color: "text-green-600 dark:text-green-400 bg-green-500/10" },
-  { key: "auto", icon: IconZap, label: "Auto Generated", sub: "from RSS feeds", color: "text-blue-600 dark:text-blue-400 bg-blue-500/10" },
-  { key: "today", icon: IconCalendar, label: "Added Today", sub: "last 24 hours", color: "text-amber-600 dark:text-amber-400 bg-amber-500/10" },
+  {
+    key: "pending",
+    icon: IconClock,
+    label: "Pending Review",
+    sub: "awaiting approval",
+    text: "text-accent",
+    border: "border-l-accent",
+  },
+  {
+    key: "pub",
+    icon: IconCheckCircle,
+    label: "Published",
+    sub: "live on app",
+    text: "text-green-600 dark:text-green-400",
+    border: "border-l-green-500",
+  },
+  {
+    key: "auto",
+    icon: IconZap,
+    label: "Auto Generated",
+    sub: "from RSS feeds",
+    text: "text-blue-600 dark:text-blue-400",
+    border: "border-l-blue-500",
+  },
+  {
+    key: "today",
+    icon: IconCalendar,
+    label: "Added Today",
+    sub: "last 24 hours",
+    text: "text-amber-600 dark:text-amber-400",
+    border: "border-l-amber-500",
+  },
 ] as const;
 
 export default function DashboardTab({
@@ -89,18 +117,20 @@ export default function DashboardTab({
         {STAT_CARDS.map((c) => (
           <div
             key={c.key}
-            className="rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20"
+            className={`relative overflow-hidden rounded-2xl border border-l-4 border-neutral-200/60 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-black/20 ${c.border}`}
           >
-            <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-lg ${c.color}`}>
-              <c.icon className="h-[18px] w-[18px]" />
-            </div>
-            <div className="text-3xl font-extrabold text-neutral-900 dark:text-neutral-100">
+            <c.icon
+              className={`pointer-events-none absolute -right-3 -top-3 h-16 w-16 opacity-[0.07] ${c.text}`}
+            />
+            <div className="relative text-3xl font-extrabold text-neutral-900 dark:text-neutral-100">
               {values[c.key]}
             </div>
-            <div className="mt-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">
+            <div className="relative mt-1 text-xs font-medium text-neutral-500 dark:text-neutral-400">
               {c.label}
             </div>
-            <div className="text-[11px] text-neutral-400 dark:text-neutral-600">{c.sub}</div>
+            <div className="relative text-[11px] text-neutral-400 dark:text-neutral-600">
+              {c.sub}
+            </div>
           </div>
         ))}
       </div>
