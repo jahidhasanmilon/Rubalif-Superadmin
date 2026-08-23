@@ -82,11 +82,11 @@ export default function Sidebar({
         />
       )}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-dvh w-60 flex-col border-r border-neutral-200 bg-white transition-[width,transform] duration-200 dark:border-neutral-800 dark:bg-neutral-900 md:static md:h-full md:translate-x-0 md:rounded-xl md:border md:shadow-xl md:shadow-black/5 dark:md:shadow-black/40 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-dvh w-60 flex-col border-r border-neutral-200 bg-white transition-[width,transform] duration-200 dark:border-neutral-700 dark:bg-neutral-900 md:static md:h-full md:translate-x-0 md:rounded-xl md:border md:shadow-xl md:shadow-black/5 dark:md:shadow-black/40 ${
           isCollapsed ? "md:w-16" : "md:w-60"
         } ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <div className="flex h-14 shrink-0 items-center gap-2 border-b border-neutral-200 px-4 dark:border-neutral-800">
+        <div className="flex h-14 shrink-0 items-center gap-2 border-b border-neutral-200 px-4 dark:border-neutral-700">
           <Image
             src="/logo.png"
             alt="Rubalif"
@@ -154,7 +154,7 @@ export default function Sidebar({
           ))}
         </nav>
 
-        <div className="shrink-0 border-t border-neutral-200 p-2 dark:border-neutral-800">
+        <div className="shrink-0 border-t border-neutral-200 p-2 dark:border-neutral-700">
           <div
             className={`flex items-center gap-2.5 rounded-lg bg-neutral-100 p-2 dark:bg-neutral-800/60 ${
               isCollapsed ? "justify-center" : ""
