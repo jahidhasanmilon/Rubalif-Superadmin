@@ -42,6 +42,9 @@ body {
 
 body {
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   @apply bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100 font-sans;
 }
 

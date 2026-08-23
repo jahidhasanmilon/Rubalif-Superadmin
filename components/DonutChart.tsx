@@ -24,12 +24,18 @@ export default function DonutChart({ sites, isDark }: DonutChartProps) {
     const chartText = style.getPropertyValue("--chart-text").trim() || "#111111";
     const chartText2 = style.getPropertyValue("--chart-text2").trim() || "#666666";
 
-    const W = canvas.width,
-      H = canvas.height,
+    const dpr = window.devicePixelRatio || 1;
+    const W = 140,
+      H = 140,
       cx = W / 2,
       cy = H / 2,
       R = Math.min(W, H) / 2 - 8,
       r = R * 0.55;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = `${W}px`;
+    canvas.style.height = `${H}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     const total = sites.reduce((s, [, c]) => s + c, 0) || 1;
     let angle = -Math.PI / 2;

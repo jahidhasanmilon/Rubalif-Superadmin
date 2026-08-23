@@ -29,9 +29,14 @@ export default function BarChart({
     const chartText2 = style.getPropertyValue("--chart-text2").trim() || "#666666";
     const gridColor = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
 
+    const dpr = window.devicePixelRatio || 1;
     const W = canvas.offsetWidth || 300,
-      H = canvas.height || 140;
-    canvas.width = W;
+      H = 140;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = `${W}px`;
+    canvas.style.height = `${H}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
 
     const bars = [
