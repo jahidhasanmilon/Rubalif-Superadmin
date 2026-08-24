@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { User } from "firebase/auth";
 import { useToast } from "./ToastProvider";
+import { useAutomationLog } from "@/hooks/useAutomationLog";
 import { IconZap } from "./icons";
 
 interface AutomationTabProps {
@@ -25,10 +26,20 @@ const PIPELINE_STEPS = [
   { icon: "📥", label: "Auto-Queue", sub: "ready to publish" },
 ];
 
+function timeAgo(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
+  if (diff < 60000) return "just now";
+  if (diff < 3600000) return Math.floor(diff / 60000) + "m ago";
+  if (diff < 86400000) return Math.floor(diff / 3600000) + "h ago";
+  return Math.floor(diff / 86400000) + "d ago";
+}
+
 export default function AutomationTab({ active, user }: AutomationTabProps) {
   const toast = useToast();
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<RunResult | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const runs = useAutomationLog();
 
   if (!active) return null;
 
@@ -129,6 +140,74 @@ export default function AutomationTab({ active, user }: AutomationTabProps) {
           </div>
         </div>
       )}
+
+      <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-black/20">
+        <div className="mb-3 flex items-center justify-between">
+          <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+            Last Run Status
+          </div>
+          {runs[0] && (
+            <div
+              className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                runs[0].errors > 0
+                  ? "bg-red-500/10 text-red-500"
+                  : "bg-green-500/10 text-green-600 dark:text-green-400"
+              }`}
+            >
+              {runs[0].errors > 0 ? `${runs[0].errors} error(s)` : "Healthy"}
+            </div>
+          )}
+        </div>
+
+        {runs.length === 0 ? (
+          <div className="py-6 text-center text-xs text-neutral-400 dark:text-neutral-600">
+            No automation runs logged yet — trigger one above, or wait for the daily cron.
+          </div>
+        ) : (
+          <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
+            {runs.slice(0, 10).map((run) => (
+              <div key={run.key} className="py-2 first:pt-0 last:pb-0">
+                <div
+                  className="flex cursor-pointer items-center gap-2.5"
+                  onClick={() => setExpanded((k) => (k === run.key ? null : run.key))}
+                >
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                      run.trigger === "cron"
+                        ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                        : "bg-accent/10 text-accent"
+                    }`}
+                  >
+                    {run.trigger === "cron" ? "⏰ Cron" : "▶ Manual"}
+                  </span>
+                  <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {timeAgo(run.finishedAt)}
+                  </span>
+                  {run.trigger === "manual" && run.triggeredBy && (
+                    <span className="hidden truncate text-[11px] text-neutral-400 dark:text-neutral-600 sm:inline">
+                      by {run.triggeredBy}
+                    </span>
+                  )}
+                  <span className="ml-auto flex shrink-0 items-center gap-2 text-[11px] font-medium">
+                    <span className="text-green-600 dark:text-green-400">+{run.added}</span>
+                    <span className="text-neutral-400 dark:text-neutral-600">{run.alreadyExists} skip</span>
+                    {run.errors > 0 && <span className="text-red-500">{run.errors} err</span>}
+                  </span>
+                </div>
+                {expanded === run.key && (
+                  <div className="mt-2 max-h-40 overflow-y-auto rounded-lg bg-neutral-950 p-3 font-mono text-[11px] leading-relaxed text-green-400">
+                    {run.log.map((line, i) => (
+                      <div key={i} className="whitespace-pre-wrap">
+                        {line}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

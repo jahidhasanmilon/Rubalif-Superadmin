@@ -55,3 +55,47 @@ export async function addToFirebase(
 
   return res.ok;
 }
+
+interface AutomationRunSummary {
+  added: number;
+  alreadyExists: number;
+  errors: number;
+  log: string[];
+  finishedAt: string;
+}
+
+const MAX_LOGGED_RUNS = 20;
+
+export async function logAutomationRun(
+  dbUrl: string,
+  result: AutomationRunSummary,
+  trigger: "cron" | "manual",
+  triggeredBy?: string
+): Promise<void> {
+  try {
+    await fetch(`${dbUrl}/Rubalif/automationRuns.json`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...result, trigger, triggeredBy: triggeredBy || null }),
+      signal: AbortSignal.timeout(10000),
+    });
+
+    const res = await fetch(
+      `${dbUrl}/Rubalif/automationRuns.json?shallow=true`,
+      { signal: AbortSignal.timeout(10000) }
+    );
+    if (!res.ok) return;
+    const keys = Object.keys((await res.json()) || {}).sort();
+    const toDelete = keys.slice(0, Math.max(0, keys.length - MAX_LOGGED_RUNS));
+    await Promise.all(
+      toDelete.map((k) =>
+        fetch(`${dbUrl}/Rubalif/automationRuns/${k}.json`, {
+          method: "DELETE",
+          signal: AbortSignal.timeout(10000),
+        }).catch(() => {})
+      )
+    );
+  } catch {
+    // logging failures shouldn't break the automation pipeline itself
+  }
+}

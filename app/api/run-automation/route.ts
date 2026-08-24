@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runAutomationPipeline } from "@/lib/newsAutomation/run";
+import { logAutomationRun } from "@/lib/newsAutomation/firebaseRest";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-async function isValidIdToken(idToken: string): Promise<boolean> {
+async function verifyIdToken(idToken: string): Promise<string | null> {
   const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
-  if (!apiKey) return false;
+  if (!apiKey) return null;
 
   const res = await fetch(
     `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`,
@@ -17,15 +18,18 @@ async function isValidIdToken(idToken: string): Promise<boolean> {
       signal: AbortSignal.timeout(10000),
     }
   );
-  if (!res.ok) return false;
+  if (!res.ok) return null;
   const data = await res.json();
-  return Array.isArray(data?.users) && data.users.length > 0;
+  const user = Array.isArray(data?.users) ? data.users[0] : null;
+  if (!user) return null;
+  return user.email || user.localId || "unknown";
 }
 
 export async function POST(req: NextRequest) {
   const authHeader = req.headers.get("authorization") || "";
   const idToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-  if (!idToken || !(await isValidIdToken(idToken))) {
+  const triggeredBy = idToken ? await verifyIdToken(idToken) : null;
+  if (!triggeredBy) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -36,5 +40,6 @@ export async function POST(req: NextRequest) {
   }
 
   const result = await runAutomationPipeline(claudeApiKey, dbUrl);
+  await logAutomationRun(dbUrl, result, "manual", triggeredBy);
   return NextResponse.json(result);
 }

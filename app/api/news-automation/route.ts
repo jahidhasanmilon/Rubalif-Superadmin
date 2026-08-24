@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runAutomationPipeline } from "@/lib/newsAutomation/run";
+import { logAutomationRun } from "@/lib/newsAutomation/firebaseRest";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -18,5 +19,6 @@ export async function GET(req: NextRequest) {
   }
 
   const result = await runAutomationPipeline(claudeApiKey, dbUrl);
+  await logAutomationRun(dbUrl, result, "cron");
   return NextResponse.json(result);
 }
