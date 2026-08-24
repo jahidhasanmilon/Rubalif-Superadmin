@@ -1,7 +1,34 @@
-import { get, ref, remove, set, update } from "firebase/database";
+import { get, push, ref, remove, set, update } from "firebase/database";
 import { ref as sRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { db, storage, auth } from "@/lib/firebase";
 import type { NewsItem } from "@/lib/types";
+
+const MAX_ACTIVITY_LOG = 100;
+
+async function logActivity(action: string, key: string, title?: string) {
+  try {
+    await push(ref(db, "Rubalif/activityLog"), {
+      action,
+      key,
+      title: title || "",
+      by: auth.currentUser?.email || "unknown",
+      at: Date.now(),
+    });
+
+    const snap = await get(ref(db, "Rubalif/activityLog"));
+    const val = snap.val();
+    if (!val) return;
+    const keys = Object.keys(val).sort();
+    const toDelete = keys.slice(0, Math.max(0, keys.length - MAX_ACTIVITY_LOG));
+    await Promise.all(toDelete.map((k) => remove(ref(db, `Rubalif/activityLog/${k}`))));
+  } catch {
+    // activity logging failures shouldn't block the actual editor action
+  }
+}
+
+function titleOf(n: NewsItem): string {
+  return n.headLineEnglish || n.titleEnglish || n.title || "";
+}
 
 export async function approveNews(key: string) {
   const snap = await get(ref(db, `Rubalif/toApprove/${key}`));
@@ -25,32 +52,43 @@ export async function approveNews(key: string) {
     status: "posted",
   });
   await remove(ref(db, `Rubalif/toApprove/${key}`));
+  await logActivity("approve", key, titleOf(n));
 }
 
 export async function rejectNews(key: string) {
+  const snap = await get(ref(db, `Rubalif/toApprove/${key}`));
+  const n: NewsItem = snap.val() || {};
   await remove(ref(db, `Rubalif/toApprove/${key}`));
+  await logActivity("reject", key, titleOf(n));
 }
 
 export async function snoozeNews(key: string, hours: number) {
   await update(ref(db, `Rubalif/toApprove/${key}`), {
     snoozedUntil: Date.now() + hours * 3600000,
   });
+  await logActivity("snooze", key);
 }
 
 export async function unsnoozeNews(key: string) {
   await update(ref(db, `Rubalif/toApprove/${key}`), { snoozedUntil: null });
+  await logActivity("unsnooze", key);
 }
 
 export async function scheduleNews(key: string, publishAt: number) {
   await update(ref(db, `Rubalif/toApprove/${key}`), { status: "scheduled", publishAt });
+  await logActivity("schedule", key);
 }
 
 export async function unscheduleNews(key: string) {
   await update(ref(db, `Rubalif/toApprove/${key}`), { status: "pending", publishAt: null });
+  await logActivity("unschedule", key);
 }
 
 export async function deletePublished(key: string) {
+  const snap = await get(ref(db, `Rubalif/summariser/${key}`));
+  const n: NewsItem = snap.val() || {};
   await remove(ref(db, `Rubalif/summariser/${key}`));
+  await logActivity("delete", key, titleOf(n));
 }
 
 export async function fetchNews(key: string, type: "pending" | "published") {
@@ -69,11 +107,12 @@ export async function saveEdit(
     ref(db, type === "pending" ? `Rubalif/toApprove/${key}` : `Rubalif/summariser/${key}`),
     data
   );
+  await logActivity("edit", key, data.headLineEnglish || data.titleEnglish || "");
 }
 
 export async function submitNews(data: Partial<NewsItem>) {
-  const { push } = await import("firebase/database");
-  await push(ref(db, "Rubalif/toApprove"), { ...data, createdAt: Date.now() });
+  const newRef = await push(ref(db, "Rubalif/toApprove"), { ...data, createdAt: Date.now() });
+  await logActivity("submit", newRef.key || "", data.headLineEnglish || "");
 }
 
 export function uploadImage(

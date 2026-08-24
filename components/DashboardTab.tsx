@@ -4,7 +4,20 @@ import { useMemo, useState, useEffect } from "react";
 import type { NewsRecord } from "@/lib/types";
 import DonutChart from "./DonutChart";
 import BarChart from "./BarChart";
+import { useActivityLog } from "@/hooks/useActivityLog";
 import { IconClock, IconCheckCircle, IconZap, IconCalendar } from "./icons";
+
+const ACTION_LABELS: Record<string, string> = {
+  approve: "✅ approved",
+  reject: "✗ rejected",
+  edit: "✏️ edited",
+  delete: "🗑️ deleted",
+  snooze: "😴 snoozed",
+  unsnooze: "▶ unsnoozed",
+  schedule: "📅 scheduled",
+  unschedule: "↩ unscheduled",
+  submit: "📤 submitted",
+};
 
 interface DashboardTabProps {
   pending: NewsRecord;
@@ -63,14 +76,28 @@ export default function DashboardTab({
       .slice(0, 6) as [string, number][];
     const maxSite = sortedSites[0]?.[1] || 1;
 
+    const topicCounts: Record<string, number> = {};
+    [...pKeys.map((k) => pending[k]), ...pubKeys.map((k) => published[k])].forEach((n) => {
+      [n.topicA, n.topicB, n.topicC].forEach((t) => {
+        if (t) topicCounts[t] = (topicCounts[t] || 0) + 1;
+      });
+    });
+    const sortedTopics = Object.entries(topicCounts).sort((a, b) => b[1] - a[1]) as [
+      string,
+      number,
+    ][];
+    const maxTopic = sortedTopics[0]?.[1] || 1;
+
     const latest = [...pKeys]
       .filter((k) => (pending[k].createdAt || 0) > 0)
       .sort((a, b) => (pending[a].createdAt || 0) - (pending[b].createdAt || 0))
       .slice(-4)
       .reverse();
 
-    return { pKeys, pubKeys, autoCount, todayCount, sortedSites, maxSite, latest };
+    return { pKeys, pubKeys, autoCount, todayCount, sortedSites, maxSite, sortedTopics, maxTopic, latest };
   }, [pending, published]);
+
+  const activity = useActivityLog();
 
   if (!active) return null;
 
@@ -218,6 +245,81 @@ export default function DashboardTab({
                   </div>
                 );
               })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-black/20">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              🏷️ News by Topic
+            </div>
+            <div className="rounded-full bg-neutral-100 px-2.5 py-1 text-[10px] text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500">
+              Pending + published
+            </div>
+          </div>
+          {stats.sortedTopics.length === 0 ? (
+            <div className="py-2 text-xs text-neutral-400 dark:text-neutral-600">No data yet</div>
+          ) : (
+            <div className="space-y-2">
+              {stats.sortedTopics.map(([name, count], i) => (
+                <div key={name} className="flex items-center gap-2">
+                  <div
+                    className="w-28 shrink-0 truncate text-xs font-medium text-neutral-700 dark:text-neutral-300"
+                    title={name}
+                  >
+                    {name}
+                  </div>
+                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${Math.round((count / stats.maxTopic) * 100)}%`,
+                        background: colors[i % colors.length],
+                      }}
+                    />
+                  </div>
+                  <div className="w-6 shrink-0 text-right text-[11px] text-neutral-400 dark:text-neutral-500">
+                    {count}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-black/20">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              📝 Editor Activity
+            </div>
+            <div className="rounded-full bg-neutral-100 px-2.5 py-1 text-[10px] text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500">
+              Audit trail
+            </div>
+          </div>
+          {activity.length === 0 ? (
+            <div className="py-2 text-xs text-neutral-400 dark:text-neutral-600">
+              No activity logged yet
+            </div>
+          ) : (
+            <div className="max-h-64 space-y-2.5 overflow-y-auto">
+              {activity.slice(0, 15).map((e) => (
+                <div key={e.key} className="text-xs">
+                  <span className="font-semibold text-neutral-700 dark:text-neutral-300">
+                    {e.by}
+                  </span>{" "}
+                  <span className="text-neutral-500 dark:text-neutral-400">
+                    {ACTION_LABELS[e.action] || e.action}
+                  </span>
+                  {e.title && (
+                    <span className="text-neutral-400 dark:text-neutral-600"> — {e.title}</span>
+                  )}
+                  <div className="text-[10px] text-neutral-400 dark:text-neutral-600">
+                    {timeAgo(e.at)}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
