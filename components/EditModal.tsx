@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { NewsItem, NewsType } from "@/lib/types";
-import { fetchNews, saveEdit } from "@/lib/newsActions";
+import { fetchNews, saveEdit, scheduleNews } from "@/lib/newsActions";
 import ImageUploadField from "./ImageUploadField";
 import { useToast } from "./ToastProvider";
 
@@ -33,6 +33,7 @@ export default function EditModal({ target, onClose, topics }: EditModalProps) {
   const [form, setForm] = useState<Partial<NewsItem>>({});
   const [thumbUrl, setThumbUrl] = useState("");
   const [loaded, setLoaded] = useState(false);
+  const [scheduleAt, setScheduleAt] = useState("");
 
   useEffect(() => {
     if (!target) {
@@ -87,6 +88,22 @@ export default function EditModal({ target, onClose, topics }: EditModalProps) {
       });
       onClose();
       toast("✅ Saved!");
+    } catch (e) {
+      toast((e as Error).message, "err");
+    }
+  };
+
+  const doSchedule = async () => {
+    if (!scheduleAt) return;
+    const ts = new Date(scheduleAt).getTime();
+    if (!ts || ts <= Date.now()) {
+      toast("Pick a future date/time", "err");
+      return;
+    }
+    try {
+      await scheduleNews(target.key, ts);
+      onClose();
+      toast("📅 Scheduled!");
     } catch (e) {
       toast((e as Error).message, "err");
     }
@@ -214,6 +231,23 @@ export default function EditModal({ target, onClose, topics }: EditModalProps) {
                 </select>
               </div>
             </div>
+            {target.type === "pending" && (
+              <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-neutral-100 pt-4 dark:border-neutral-800">
+                <label className={labelCls + " mb-0"}>Schedule for later</label>
+                <input
+                  type="datetime-local"
+                  value={scheduleAt}
+                  onChange={(e) => setScheduleAt(e.target.value)}
+                  className={`${inputCls}`}
+                />
+                <button
+                  className="rounded-lg border border-blue-200 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-500 hover:text-white dark:border-blue-900 dark:text-blue-400"
+                  onClick={doSchedule}
+                >
+                  📅 Schedule
+                </button>
+              </div>
+            )}
             <div className="mt-4 flex gap-2 border-t border-neutral-100 pt-4 dark:border-neutral-800">
               <button
                 className="rounded-lg bg-gradient-to-b from-accent-hover to-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-accent/30 transition hover:brightness-110"

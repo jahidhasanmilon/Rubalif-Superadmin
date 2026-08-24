@@ -1,9 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { NewsRecord, NewsType } from "@/lib/types";
 import NewsCard from "./NewsCard";
-import { approveNews, rejectNews } from "@/lib/newsActions";
+import {
+  approveNews,
+  rejectNews,
+  snoozeNews,
+  unsnoozeNews,
+  unscheduleNews,
+} from "@/lib/newsActions";
 import { useToast } from "./ToastProvider";
 
 interface PendingTabProps {
@@ -18,11 +24,30 @@ export default function PendingTab({ data, topics, active, onEdit }: PendingTabP
   const [search, setSearch] = useState("");
   const [topicFilter, setTopicFilter] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [view, setView] = useState<"active" | "snoozed">("active");
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  const { visibleData, snoozedData } = useMemo(() => {
+    const visible: NewsRecord = {};
+    const snoozed: NewsRecord = {};
+    for (const [k, n] of Object.entries(data)) {
+      if (n.snoozedUntil && n.snoozedUntil > now) snoozed[k] = n;
+      else visible[k] = n;
+    }
+    return { visibleData: visible, snoozedData: snoozed };
+  }, [data, now]);
+
+  const source = view === "active" ? visibleData : snoozedData;
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     const result: NewsRecord = {};
-    for (const [k, n] of Object.entries(data)) {
+    for (const [k, n] of Object.entries(source)) {
       const matchesQ =
         !q ||
         (n.headLineEnglish || "").toLowerCase().includes(q) ||
@@ -32,7 +57,7 @@ export default function PendingTab({ data, topics, active, onEdit }: PendingTabP
       if (matchesQ && matchesTopic) result[k] = n;
     }
     return result;
-  }, [data, search, topicFilter]);
+  }, [source, search, topicFilter]);
 
   const sortedKeys = useMemo(() => {
     return Object.keys(filtered).sort(
@@ -65,6 +90,33 @@ export default function PendingTab({ data, topics, active, onEdit }: PendingTabP
     try {
       await rejectNews(key);
       toast("Rejected.");
+    } catch (e) {
+      toast((e as Error).message, "err");
+    }
+  };
+
+  const doSnooze = async (key: string, hours: number) => {
+    try {
+      await snoozeNews(key, hours);
+      toast("😴 Snoozed.");
+    } catch (e) {
+      toast((e as Error).message, "err");
+    }
+  };
+
+  const doUnsnooze = async (key: string) => {
+    try {
+      await unsnoozeNews(key);
+      toast("▶ Back in the queue.");
+    } catch (e) {
+      toast((e as Error).message, "err");
+    }
+  };
+
+  const doUnschedule = async (key: string) => {
+    try {
+      await unscheduleNews(key);
+      toast("↩ Unscheduled.");
     } catch (e) {
       toast((e as Error).message, "err");
     }
@@ -113,7 +165,30 @@ export default function PendingTab({ data, topics, active, onEdit }: PendingTabP
         </span>
       </div>
 
-      {selected.size > 0 && (
+      <div className="mb-3 flex gap-1.5">
+        <button
+          onClick={() => setView("active")}
+          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+            view === "active"
+              ? "bg-accent text-white"
+              : "border border-neutral-200 text-neutral-500 dark:border-neutral-700 dark:text-neutral-400"
+          }`}
+        >
+          Pending ({Object.keys(visibleData).length})
+        </button>
+        <button
+          onClick={() => setView("snoozed")}
+          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+            view === "snoozed"
+              ? "bg-accent text-white"
+              : "border border-neutral-200 text-neutral-500 dark:border-neutral-700 dark:text-neutral-400"
+          }`}
+        >
+          😴 Snoozed ({Object.keys(snoozedData).length})
+        </button>
+      </div>
+
+      {view === "active" && selected.size > 0 && (
         <div className="mb-3 flex items-center gap-2.5 rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2 dark:border-neutral-800 dark:bg-neutral-800/60">
           <span className="flex-1 text-xs text-neutral-500 dark:text-neutral-400">
             {selected.size} selected
@@ -135,21 +210,23 @@ export default function PendingTab({ data, topics, active, onEdit }: PendingTabP
 
       <div className="mb-2.5 flex items-center justify-between">
         <div className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-          Pending Approval
+          {view === "active" ? "Pending Approval" : "Snoozed"}
         </div>
         <div className="text-[11px] text-neutral-400 dark:text-neutral-600">
-          {Object.keys(data).length} pending
+          {Object.keys(data).length} total
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
         {sortedKeys.length === 0 ? (
           <div className="py-12 text-center">
-            <div className="mb-3 text-4xl">🎉</div>
+            <div className="mb-3 text-4xl">{view === "active" ? "🎉" : "😴"}</div>
             <div className="mb-1 text-base font-bold text-neutral-900 dark:text-neutral-100">
-              All clear!
+              {view === "active" ? "All clear!" : "Nothing snoozed"}
             </div>
-            <div className="text-xs text-neutral-500 dark:text-neutral-400">No pending news</div>
+            <div className="text-xs text-neutral-500 dark:text-neutral-400">
+              {view === "active" ? "No pending news" : "Snoozed items will show up here"}
+            </div>
           </div>
         ) : (
           sortedKeys.map((k) => (
@@ -159,11 +236,15 @@ export default function PendingTab({ data, topics, active, onEdit }: PendingTabP
               news={filtered[k]}
               type="pending"
               selected={selected.has(k)}
+              snoozed={view === "snoozed"}
               onToggleSelect={toggleSelect}
               onApprove={doApprove}
               onReject={doReject}
               onDelete={() => {}}
               onEdit={onEdit}
+              onSnooze={view === "active" ? doSnooze : undefined}
+              onUnsnooze={doUnsnooze}
+              onUnschedule={doUnschedule}
             />
           ))
         )}

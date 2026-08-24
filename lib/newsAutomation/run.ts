@@ -2,7 +2,13 @@ import { RSS_FEEDS, MAX_NEWS_PER_FEED, MAX_NEWS_GOOGLE } from "./feeds";
 import { fetchRSS } from "./rssFetcher";
 import { isImportantNews } from "./importantNews";
 import { processWithClaude } from "./claude";
-import { addToFirebase, newsExists } from "./firebaseRest";
+import {
+  addToFirebase,
+  newsExists,
+  getExistingTitles,
+  publishDueScheduled,
+} from "./firebaseRest";
+import { isDuplicateTitle } from "./similarity";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -22,6 +28,13 @@ export async function runAutomationPipeline(
   let totalAdded = 0;
   let alreadyExists = 0;
   let errors = 0;
+
+  const publishedCount = await publishDueScheduled(dbUrl);
+  if (publishedCount > 0) {
+    log.push(`Published ${publishedCount} scheduled item(s) that came due`);
+  }
+
+  const existingTitles = await getExistingTitles(dbUrl);
 
   for (const feed of RSS_FEEDS) {
     log.push(`Processing: ${feed.site} (${feed.lang})`);
@@ -47,6 +60,12 @@ export async function runAutomationPipeline(
         continue;
       }
 
+      if (isDuplicateTitle(item.title, existingTitles)) {
+        alreadyExists++;
+        log.push(`  Skipped (similar title already exists): ${item.title.slice(0, 50)}`);
+        continue;
+      }
+
       const processed = await processWithClaude(item, feed.lang, claudeApiKey);
       if (!processed) {
         errors++;
@@ -58,6 +77,7 @@ export async function runAutomationPipeline(
       if (added) {
         totalAdded++;
         count++;
+        existingTitles.push(item.title);
         log.push(`  Added: ${processed.headLineEnglish.slice(0, 50)}`);
       } else {
         errors++;

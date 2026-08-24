@@ -31,6 +31,24 @@ export async function rejectNews(key: string) {
   await remove(ref(db, `Rubalif/toApprove/${key}`));
 }
 
+export async function snoozeNews(key: string, hours: number) {
+  await update(ref(db, `Rubalif/toApprove/${key}`), {
+    snoozedUntil: Date.now() + hours * 3600000,
+  });
+}
+
+export async function unsnoozeNews(key: string) {
+  await update(ref(db, `Rubalif/toApprove/${key}`), { snoozedUntil: null });
+}
+
+export async function scheduleNews(key: string, publishAt: number) {
+  await update(ref(db, `Rubalif/toApprove/${key}`), { status: "scheduled", publishAt });
+}
+
+export async function unscheduleNews(key: string) {
+  await update(ref(db, `Rubalif/toApprove/${key}`), { status: "pending", publishAt: null });
+}
+
 export async function deletePublished(key: string) {
   await remove(ref(db, `Rubalif/summariser/${key}`));
 }

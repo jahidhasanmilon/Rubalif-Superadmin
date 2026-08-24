@@ -8,23 +8,37 @@ interface NewsCardProps {
   news: NewsItem;
   type: NewsType;
   selected: boolean;
+  snoozed?: boolean;
   onToggleSelect: (key: string, checked: boolean) => void;
   onApprove: (key: string) => void;
   onReject: (key: string) => void;
   onDelete: (key: string) => void;
   onEdit: (key: string, type: NewsType) => void;
+  onSnooze?: (key: string, hours: number) => void;
+  onUnsnooze?: (key: string) => void;
+  onUnschedule?: (key: string) => void;
 }
+
+const SNOOZE_OPTIONS = [
+  { hours: 3, label: "3 hours" },
+  { hours: 24, label: "Tomorrow" },
+  { hours: 72, label: "3 days" },
+];
 
 export default function NewsCard({
   itemKey,
   news,
   type,
   selected,
+  snoozed,
   onToggleSelect,
   onApprove,
   onReject,
   onDelete,
   onEdit,
+  onSnooze,
+  onUnsnooze,
+  onUnschedule,
 }: NewsCardProps) {
   const thumb = news.thumbnail || news.thumb || "";
   const headEn = news.headLineEnglish || news.titleEnglish || news.title || "—";
@@ -32,6 +46,7 @@ export default function NewsCard({
   const shortTitle = news.titleEnglish || "";
   const dEn = news.descriptionEnglish || "";
   const topics = [news.topicA, news.topicB, news.topicC].filter(Boolean);
+  const scheduled = type === "pending" && news.status === "scheduled" && !!news.publishAt;
 
   return (
     <div className="group flex items-stretch gap-0 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-black/20">
@@ -75,9 +90,19 @@ export default function NewsCard({
             </span>
           )}
           {type === "pending" ? (
-            <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-600 dark:text-amber-400">
-              ⏳ Pending
-            </span>
+            scheduled ? (
+              <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-600 dark:text-blue-400">
+                📅 Scheduled: {new Date(news.publishAt!).toLocaleString()}
+              </span>
+            ) : snoozed ? (
+              <span className="rounded-full bg-purple-500/10 px-2 py-0.5 text-[10px] font-semibold text-purple-600 dark:text-purple-400">
+                😴 Snoozed until {new Date(news.snoozedUntil!).toLocaleString()}
+              </span>
+            ) : (
+              <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                ⏳ Pending
+              </span>
+            )
           ) : (
             <span className="rounded-full bg-green-500/10 px-2 py-0.5 text-[10px] font-semibold text-green-600 dark:text-green-400">
               ✅ Published
@@ -116,28 +141,92 @@ export default function NewsCard({
             🔗 {news.url}
           </a>
         )}
-        <div className="mt-auto flex flex-wrap gap-1.5 pt-2">
+        <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-2">
           {type === "pending" ? (
-            <>
-              <button
-                className="flex items-center gap-1 rounded-md bg-green-500 px-2.5 py-1 text-[11px] font-semibold text-black transition hover:opacity-85"
-                onClick={() => onApprove(itemKey)}
-              >
-                <IconCheck className="h-3 w-3" /> Approve
-              </button>
-              <button
-                className="flex items-center gap-1 rounded-md bg-blue-500/10 px-2.5 py-1 text-[11px] font-semibold text-blue-600 transition hover:bg-blue-500 hover:text-white dark:text-blue-400"
-                onClick={() => onEdit(itemKey, "pending")}
-              >
-                <IconPencil className="h-3 w-3" /> Edit
-              </button>
-              <button
-                className="flex items-center gap-1 rounded-md bg-red-500/10 px-2.5 py-1 text-[11px] font-semibold text-red-500 transition hover:bg-red-500 hover:text-white"
-                onClick={() => onReject(itemKey)}
-              >
-                <IconX className="h-3 w-3" /> Reject
-              </button>
-            </>
+            scheduled ? (
+              <>
+                <button
+                  className="flex items-center gap-1 rounded-md bg-blue-500/10 px-2.5 py-1 text-[11px] font-semibold text-blue-600 transition hover:bg-blue-500 hover:text-white dark:text-blue-400"
+                  onClick={() => onEdit(itemKey, "pending")}
+                >
+                  <IconPencil className="h-3 w-3" /> Edit
+                </button>
+                <button
+                  className="flex items-center gap-1 rounded-md bg-neutral-100 px-2.5 py-1 text-[11px] font-semibold text-neutral-600 transition hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400"
+                  onClick={() => onUnschedule?.(itemKey)}
+                >
+                  ↩ Unschedule
+                </button>
+                <button
+                  className="flex items-center gap-1 rounded-md bg-red-500/10 px-2.5 py-1 text-[11px] font-semibold text-red-500 transition hover:bg-red-500 hover:text-white"
+                  onClick={() => onReject(itemKey)}
+                >
+                  <IconX className="h-3 w-3" /> Reject
+                </button>
+              </>
+            ) : snoozed ? (
+              <>
+                <button
+                  className="flex items-center gap-1 rounded-md bg-blue-500/10 px-2.5 py-1 text-[11px] font-semibold text-blue-600 transition hover:bg-blue-500 hover:text-white dark:text-blue-400"
+                  onClick={() => onEdit(itemKey, "pending")}
+                >
+                  <IconPencil className="h-3 w-3" /> Edit
+                </button>
+                <button
+                  className="flex items-center gap-1 rounded-md bg-green-500 px-2.5 py-1 text-[11px] font-semibold text-black transition hover:opacity-85"
+                  onClick={() => onUnsnooze?.(itemKey)}
+                >
+                  ▶ Show now
+                </button>
+                <button
+                  className="flex items-center gap-1 rounded-md bg-red-500/10 px-2.5 py-1 text-[11px] font-semibold text-red-500 transition hover:bg-red-500 hover:text-white"
+                  onClick={() => onReject(itemKey)}
+                >
+                  <IconX className="h-3 w-3" /> Reject
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className="flex items-center gap-1 rounded-md bg-green-500 px-2.5 py-1 text-[11px] font-semibold text-black transition hover:opacity-85"
+                  onClick={() => onApprove(itemKey)}
+                >
+                  <IconCheck className="h-3 w-3" /> Approve
+                </button>
+                <button
+                  className="flex items-center gap-1 rounded-md bg-blue-500/10 px-2.5 py-1 text-[11px] font-semibold text-blue-600 transition hover:bg-blue-500 hover:text-white dark:text-blue-400"
+                  onClick={() => onEdit(itemKey, "pending")}
+                >
+                  <IconPencil className="h-3 w-3" /> Edit
+                </button>
+                <button
+                  className="flex items-center gap-1 rounded-md bg-red-500/10 px-2.5 py-1 text-[11px] font-semibold text-red-500 transition hover:bg-red-500 hover:text-white"
+                  onClick={() => onReject(itemKey)}
+                >
+                  <IconX className="h-3 w-3" /> Reject
+                </button>
+                {onSnooze && (
+                  <select
+                    defaultValue=""
+                    onChange={(e) => {
+                      const hours = Number(e.target.value);
+                      if (hours) onSnooze(itemKey, hours);
+                      e.target.value = "";
+                    }}
+                    className="rounded-md border border-neutral-200 bg-white px-1.5 py-1 text-[11px] font-medium text-neutral-500 outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400"
+                  >
+                    <option value="" disabled>
+                      😴 Snooze...
+                    </option>
+                    {SNOOZE_OPTIONS.map((o) => (
+                      <option key={o.hours} value={o.hours}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </>
+            )
           ) : (
             <>
               <button
