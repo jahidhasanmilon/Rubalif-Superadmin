@@ -17,6 +17,7 @@ interface NewsCardProps {
   onSnooze?: (key: string, hours: number) => void;
   onUnsnooze?: (key: string) => void;
   onUnschedule?: (key: string) => void;
+  canDelete?: boolean;
 }
 
 const SNOOZE_OPTIONS = [
@@ -39,6 +40,7 @@ export default function NewsCard({
   onSnooze,
   onUnsnooze,
   onUnschedule,
+  canDelete = true,
 }: NewsCardProps) {
   const thumb = news.thumbnail || news.thumb || "";
   const headEn = news.headLineEnglish || news.titleEnglish || news.title || "—";
@@ -236,7 +238,9 @@ export default function NewsCard({
                 <IconPencil className="h-3 w-3" /> Edit
               </button>
               <button
-                className="flex items-center gap-1 rounded-md bg-red-500/10 px-2.5 py-1 text-[11px] font-semibold text-red-500 transition hover:bg-red-500 hover:text-white"
+                disabled={!canDelete}
+                title={canDelete ? undefined : "Superadmin only"}
+                className="flex items-center gap-1 rounded-md bg-red-500/10 px-2.5 py-1 text-[11px] font-semibold text-red-500 transition hover:bg-red-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-red-500/10 disabled:hover:text-red-500"
                 onClick={() => onDelete(itemKey)}
               >
                 <IconTrash className="h-3 w-3" /> Delete

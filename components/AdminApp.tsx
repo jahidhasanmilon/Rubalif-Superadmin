@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useAuth } from "@/hooks/useAuth";
 import { useNewsData } from "@/hooks/useNewsData";
 import { useTopics } from "@/hooks/useTopics";
+import { useUserRole } from "@/hooks/useUserRole";
 import LoginScreen from "./LoginScreen";
 import Sidebar, { type Tab } from "./Sidebar";
 import Topbar from "./Topbar";
@@ -23,6 +24,7 @@ export default function AdminApp() {
   const { user, authReady, logout } = useAuth();
   const { pending, published } = useNewsData();
   const topics = useTopics();
+  const { role, allRoles } = useUserRole(user);
 
   const [isDark, setIsDark] = useState(() => {
     if (typeof window === "undefined") return true;
@@ -87,6 +89,7 @@ export default function AdminApp() {
             topics={topics}
             active={activeTab === "published"}
             onEdit={(key, type) => setEditTarget({ key, type })}
+            canDelete={role === "superadmin"}
           />
           <AddNewsTab active={activeTab === "add"} topics={topics} />
           <AddMagazineTab active={activeTab === "addMagazine"} />
@@ -102,6 +105,8 @@ export default function AdminApp() {
             pendingCount={Object.keys(pending).length}
             publishedCount={Object.keys(published).length}
             topics={topics}
+            role={role}
+            allRoles={allRoles}
           />
         </div>
       </div>

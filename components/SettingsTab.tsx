@@ -4,6 +4,8 @@ import { useState } from "react";
 import type { User } from "firebase/auth";
 import { useToast } from "./ToastProvider";
 import { addTopic, removeTopic } from "@/lib/topicsActions";
+import { setUserRole, removeUserRole, type Role } from "@/lib/roles";
+import type { RoleEntry } from "@/hooks/useUserRole";
 
 interface SettingsTabProps {
   active: boolean;
@@ -16,6 +18,8 @@ interface SettingsTabProps {
   pendingCount: number;
   publishedCount: number;
   topics: string[];
+  role: Role | null;
+  allRoles: RoleEntry[];
 }
 
 export default function SettingsTab({
@@ -29,11 +33,17 @@ export default function SettingsTab({
   pendingCount,
   publishedCount,
   topics,
+  role,
+  allRoles,
 }: SettingsTabProps) {
   const toast = useToast();
   const [newTopic, setNewTopic] = useState("");
+  const [newMemberEmail, setNewMemberEmail] = useState("");
+  const [newMemberRole, setNewMemberRole] = useState<Role>("editor");
 
   if (!active) return null;
+
+  const isSuperadmin = role === "superadmin";
 
   const handleAddTopic = async () => {
     const name = newTopic.trim();
@@ -49,6 +59,39 @@ export default function SettingsTab({
   const handleRemoveTopic = async (topic: string) => {
     try {
       await removeTopic(topics, topic);
+    } catch (e) {
+      toast((e as Error).message, "err");
+    }
+  };
+
+  const handleAddMember = async () => {
+    const email = newMemberEmail.trim().toLowerCase();
+    if (!email) return;
+    try {
+      await setUserRole(email, newMemberRole);
+      setNewMemberEmail("");
+      toast(`✅ Added as ${newMemberRole}`);
+    } catch (e) {
+      toast((e as Error).message, "err");
+    }
+  };
+
+  const handleChangeRole = async (email: string, r: Role) => {
+    try {
+      await setUserRole(email, r);
+    } catch (e) {
+      toast((e as Error).message, "err");
+    }
+  };
+
+  const handleRemoveMember = async (email: string) => {
+    if (email === user?.email) {
+      toast("You can't remove your own access", "err");
+      return;
+    }
+    try {
+      await removeUserRole(email);
+      toast("Removed.");
     } catch (e) {
       toast((e as Error).message, "err");
     }
@@ -88,7 +131,22 @@ export default function SettingsTab({
         </div>
         <div className="flex items-center justify-between rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-3.5 dark:border-neutral-800 dark:bg-neutral-800/60">
           <div>
-            <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Account</div>
+            <div className="flex items-center gap-1.5">
+              <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                Account
+              </div>
+              {role && (
+                <span
+                  className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase ${
+                    isSuperadmin
+                      ? "bg-accent/10 text-accent"
+                      : "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                  }`}
+                >
+                  {role}
+                </span>
+              )}
+            </div>
             <div className="text-[11px] text-neutral-500 dark:text-neutral-400">{user?.email || ""}</div>
           </div>
           <button
@@ -118,46 +176,112 @@ export default function SettingsTab({
             🌐 Region: Asia Southeast 1
           </div>
         </div>
-        <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-800/60">
-          <div className="mb-2.5 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-            Topics
-          </div>
-          <div className="mb-3 flex flex-wrap gap-1.5">
-            {topics.map((t) => (
-              <span
-                key={t}
-                className="flex items-center gap-1.5 rounded-full bg-blue-500/10 px-2.5 py-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400"
-              >
-                {t}
-                <button
-                  onClick={() => handleRemoveTopic(t)}
-                  className="text-blue-600/70 hover:text-red-500 dark:text-blue-400/70"
-                  aria-label={`Remove ${t}`}
+        {isSuperadmin && (
+          <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-800/60">
+            <div className="mb-2.5 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              Topics
+            </div>
+            <div className="mb-3 flex flex-wrap gap-1.5">
+              {topics.map((t) => (
+                <span
+                  key={t}
+                  className="flex items-center gap-1.5 rounded-full bg-blue-500/10 px-2.5 py-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400"
                 >
-                  ✕
-                </button>
-              </span>
-            ))}
+                  {t}
+                  <button
+                    onClick={() => handleRemoveTopic(t)}
+                    className="text-blue-600/70 hover:text-red-500 dark:text-blue-400/70"
+                    aria-label={`Remove ${t}`}
+                  >
+                    ✕
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="New topic name"
+                value={newTopic}
+                onChange={(e) => setNewTopic(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAddTopic();
+                }}
+                className="flex-1 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 outline-none focus:border-accent dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
+              />
+              <button
+                className="rounded-lg bg-gradient-to-b from-accent-hover to-accent px-3.5 py-2 text-xs font-semibold text-white shadow-sm shadow-accent/30 transition hover:brightness-110"
+                onClick={handleAddTopic}
+              >
+                + Add
+              </button>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="New topic name"
-              value={newTopic}
-              onChange={(e) => setNewTopic(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleAddTopic();
-              }}
-              className="flex-1 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 outline-none focus:border-accent dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
-            />
-            <button
-              className="rounded-lg bg-gradient-to-b from-accent-hover to-accent px-3.5 py-2 text-xs font-semibold text-white shadow-sm shadow-accent/30 transition hover:brightness-110"
-              onClick={handleAddTopic}
-            >
-              + Add
-            </button>
+        )}
+        {isSuperadmin && (
+          <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-800/60">
+            <div className="mb-2.5 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              Team &amp; Roles
+            </div>
+            <div className="mb-3 space-y-1.5">
+              {allRoles.length === 0 ? (
+                <div className="text-xs text-neutral-400 dark:text-neutral-600">No team members yet</div>
+              ) : (
+                allRoles.map((r) => (
+                  <div
+                    key={r.email}
+                    className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 py-2 dark:border-neutral-700 dark:bg-neutral-900"
+                  >
+                    <span className="min-w-0 flex-1 truncate text-xs text-neutral-700 dark:text-neutral-300">
+                      {r.email}
+                    </span>
+                    <select
+                      value={r.role}
+                      onChange={(e) => handleChangeRole(r.email, e.target.value as Role)}
+                      className="rounded-md border border-neutral-200 bg-neutral-50 px-1.5 py-1 text-[11px] font-medium text-neutral-600 outline-none dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400"
+                    >
+                      <option value="editor">Editor</option>
+                      <option value="superadmin">Superadmin</option>
+                    </select>
+                    <button
+                      onClick={() => handleRemoveMember(r.email)}
+                      className="text-[11px] font-semibold text-red-500 hover:underline"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <input
+                type="email"
+                placeholder="editor@email.com"
+                value={newMemberEmail}
+                onChange={(e) => setNewMemberEmail(e.target.value)}
+                className="min-w-40 flex-1 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 outline-none focus:border-accent dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
+              />
+              <select
+                value={newMemberRole}
+                onChange={(e) => setNewMemberRole(e.target.value as Role)}
+                className="rounded-lg border border-neutral-200 bg-white px-2.5 py-2 text-xs text-neutral-600 outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400"
+              >
+                <option value="editor">Editor</option>
+                <option value="superadmin">Superadmin</option>
+              </select>
+              <button
+                className="rounded-lg bg-gradient-to-b from-accent-hover to-accent px-3.5 py-2 text-xs font-semibold text-white shadow-sm shadow-accent/30 transition hover:brightness-110"
+                onClick={handleAddMember}
+              >
+                + Add
+              </button>
+            </div>
+            <div className="mt-2.5 text-[10px] text-neutral-400 dark:text-neutral-600">
+              A person must sign in with this email at least once for their Firebase account to
+              exist — adding them here just assigns their role.
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -11,9 +11,16 @@ interface PublishedTabProps {
   topics: string[];
   active: boolean;
   onEdit: (key: string, type: NewsType) => void;
+  canDelete: boolean;
 }
 
-export default function PublishedTab({ data, topics, active, onEdit }: PublishedTabProps) {
+export default function PublishedTab({
+  data,
+  topics,
+  active,
+  onEdit,
+  canDelete,
+}: PublishedTabProps) {
   const toast = useToast();
   const [search, setSearch] = useState("");
   const [topicFilter, setTopicFilter] = useState("");
@@ -141,6 +148,7 @@ export default function PublishedTab({ data, topics, active, onEdit }: Published
               onReject={() => {}}
               onDelete={doDelete}
               onEdit={onEdit}
+              canDelete={canDelete}
             />
           ))
         )}
