@@ -2,6 +2,24 @@ import { get, push, ref, remove, set, update } from "firebase/database";
 import { ref as sRef, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db, storage, auth } from "@/lib/firebase";
 import type { NewsItem } from "@/lib/types";
+import { isDuplicateTitle } from "@/lib/newsAutomation/similarity";
+
+async function findExistingDuplicate(url: string, title: string): Promise<boolean> {
+  const [pendingSnap, publishedSnap] = await Promise.all([
+    get(ref(db, "Rubalif/toApprove")),
+    get(ref(db, "Rubalif/summariser")),
+  ]);
+  const all: NewsItem[] = [
+    ...Object.values((pendingSnap.val() || {}) as Record<string, NewsItem>),
+    ...Object.values((publishedSnap.val() || {}) as Record<string, NewsItem>),
+  ];
+
+  if (url && all.some((n) => n.url === url)) return true;
+  if (!title) return false;
+
+  const titles = all.map((n) => n.headLineEnglish || n.title || "").filter(Boolean);
+  return isDuplicateTitle(title, titles);
+}
 
 const MAX_ACTIVITY_LOG = 100;
 
@@ -111,6 +129,10 @@ export async function saveEdit(
 }
 
 export async function submitNews(data: Partial<NewsItem>) {
+  const isDuplicate = await findExistingDuplicate(data.url || "", data.headLineEnglish || "");
+  if (isDuplicate) {
+    throw new Error("This story (same URL or a very similar headline) already exists.");
+  }
   const newRef = await push(ref(db, "Rubalif/toApprove"), { ...data, createdAt: Date.now() });
   await logActivity("submit", newRef.key || "", data.headLineEnglish || "");
 }
