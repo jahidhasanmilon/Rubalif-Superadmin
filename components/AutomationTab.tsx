@@ -4,7 +4,8 @@ import { useState } from "react";
 import type { User } from "firebase/auth";
 import { useToast } from "./ToastProvider";
 import { useAutomationLog } from "@/hooks/useAutomationLog";
-import { IconZap } from "./icons";
+import { removeAutomationRun, clearAutomationLog } from "@/lib/automationLogActions";
+import { IconZap, IconX } from "./icons";
 
 interface AutomationTabProps {
   active: boolean;
@@ -60,6 +61,24 @@ export default function AutomationTab({ active, user }: AutomationTabProps) {
       toast((e as Error).message, "err");
     } finally {
       setRunning(false);
+    }
+  };
+
+  const doRemoveRun = async (key: string) => {
+    try {
+      await removeAutomationRun(key);
+    } catch (e) {
+      toast((e as Error).message, "err");
+    }
+  };
+
+  const doClearAll = async () => {
+    if (!confirm("Clear the entire automation log?")) return;
+    try {
+      await clearAutomationLog();
+      toast("🗑️ Log cleared.");
+    } catch (e) {
+      toast((e as Error).message, "err");
     }
   };
 
@@ -146,17 +165,27 @@ export default function AutomationTab({ active, user }: AutomationTabProps) {
           <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
             Last Run Status
           </div>
-          {runs[0] && (
-            <div
-              className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                runs[0].errors > 0
-                  ? "bg-red-500/10 text-red-500"
-                  : "bg-green-500/10 text-green-600 dark:text-green-400"
-              }`}
-            >
-              {runs[0].errors > 0 ? `${runs[0].errors} error(s)` : "Healthy"}
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            {runs[0] && (
+              <div
+                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                  runs[0].errors > 0
+                    ? "bg-red-500/10 text-red-500"
+                    : "bg-green-500/10 text-green-600 dark:text-green-400"
+                }`}
+              >
+                {runs[0].errors > 0 ? `${runs[0].errors} error(s)` : "Healthy"}
+              </div>
+            )}
+            {runs.length > 0 && (
+              <button
+                onClick={doClearAll}
+                className="text-[11px] font-semibold text-neutral-400 hover:text-red-500 dark:text-neutral-600"
+              >
+                Clear all
+              </button>
+            )}
+          </div>
         </div>
 
         {runs.length === 0 ? (
@@ -193,6 +222,16 @@ export default function AutomationTab({ active, user }: AutomationTabProps) {
                     <span className="text-neutral-400 dark:text-neutral-600">{run.alreadyExists} skip</span>
                     {run.errors > 0 && <span className="text-red-500">{run.errors} err</span>}
                   </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      doRemoveRun(run.key);
+                    }}
+                    className="shrink-0 text-neutral-300 hover:text-red-500 dark:text-neutral-700"
+                    aria-label="Remove this run"
+                  >
+                    <IconX className="h-3 w-3" />
+                  </button>
                 </div>
                 {expanded === run.key && (
                   <div className="mt-2 max-h-40 overflow-y-auto rounded-lg bg-neutral-950 p-3 font-mono text-[11px] leading-relaxed text-green-400">
